@@ -11,3 +11,180 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+enum UserRole {
+  admin
+  commercial
+}
+
+enum BusinessStatus {
+  new_lead
+  assigned
+  waiting_response
+  interested
+  dossier_sent
+  meeting_scheduled
+  meeting_done
+  proposal_sent
+  negotiating
+  won
+  lost
+  recontact_later
+  discarded
+}
+
+enum Category {
+  restaurant
+  hairdresser
+  beauty_center
+  hotel
+  shop
+  gym
+  clinic
+  other
+}
+
+enum Priority {
+  low
+  medium
+  high
+}
+
+enum LeadSource {
+  instagram
+  google_maps
+  walk_in
+  referral
+  website
+  existing_contact
+  other
+}
+
+enum ActivityType {
+  business_created
+  business_assigned
+  instagram_message_sent
+  email_sent
+  phone_call_done
+  visit_done
+  response_received
+  dossier_sent
+  meeting_scheduled
+  meeting_done
+  proposal_sent
+  follow_up_created
+  follow_up_done
+  follow_up_cancelled
+  status_changed
+  note_added
+}
+
+enum FollowUpStatus {
+  pending
+  done
+  cancelled
+}
+
+model User {
+  id     String   @id @default(uuid())
+  name   String
+  email  String   @unique
+  role   UserRole @default(commercial)
+  active Boolean  @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  assignedBusinesses Business[] @relation("AssignedBusinesses")
+  createdBusinesses  Business[] @relation("CreatedBusinesses")
+
+  activities Activity[]
+  followUps  FollowUp[]
+}
+
+model Business {
+  id       String         @id @default(uuid())
+  name     String
+  category Category
+  status   BusinessStatus @default(new_lead)
+
+  assignedToId String?
+  assignedTo   User?   @relation("AssignedBusinesses", fields: [assignedToId], references: [id])
+
+  createdById String
+  createdBy   User   @relation("CreatedBusinesses", fields: [createdById], references: [id])
+
+  instagram String?
+  email     String?
+  phone     String?
+  website   String?
+  address   String?
+
+  priority Priority   @default(medium)
+  source   LeadSource
+
+  lastContactedAt DateTime?
+  nextFollowUpAt  DateTime?
+
+  notes String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  activities Activity[]
+  followUps  FollowUp[]
+  contacts   Contact[]
+}
+
+model Activity {
+  id String @id @default(uuid())
+
+  businessId String
+  business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  type ActivityType
+
+  notes    String?
+  metadata Json?
+
+  createdAt DateTime @default(now())
+}
+
+model FollowUp {
+  id String @id @default(uuid())
+
+  businessId String
+  business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+
+  assignedToId String
+  assignedTo   User   @relation(fields: [assignedToId], references: [id])
+
+  status FollowUpStatus @default(pending)
+
+  dueDate DateTime
+  note    String?
+
+  completedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Contact {
+  id String @id @default(uuid())
+
+  businessId String
+  business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+
+  name  String?
+  role  String?
+  email String?
+  phone String?
+  notes String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
