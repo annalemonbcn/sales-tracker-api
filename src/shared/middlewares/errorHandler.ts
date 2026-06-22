@@ -2,6 +2,7 @@ import type { ErrorRequestHandler } from 'express';
 import { ZodError } from 'zod';
 import { AppError } from '../errors.js';
 import { sendError } from '../http.js';
+import { formatZodError } from '../zod.js';
 
 export const errorHandler: ErrorRequestHandler = (error, _req, res, _next) => {
   if (error instanceof AppError) {
@@ -18,7 +19,7 @@ export const errorHandler: ErrorRequestHandler = (error, _req, res, _next) => {
       statusCode: 400,
       code: 'VALIDATION_ERROR',
       message: 'Invalid request data',
-      details: error.flatten(),
+      details: formatZodError(error),
     });
   }
 
