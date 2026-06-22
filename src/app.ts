@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import { userRouter } from './modules/users/user.routes.js';
+import { businessRouter } from './modules/businesses/business.routes.js';
 import { notFoundHandler } from './shared/middlewares/notFoundHandler.js';
 import { errorHandler } from './shared/middlewares/errorHandler.js';
 
@@ -17,6 +18,7 @@ app.get('/health', (_req, res) => {
 });
 
 app.use('/users', userRouter);
+app.use('/businesses', businessRouter);
 
 app.use(notFoundHandler);
 app.use(errorHandler);

@@ -1,0 +1,43 @@
+import type { Prisma } from '../../generated/prisma/client.js';
+
+export const businessUserSelect = {
+  id: true,
+  name: true,
+  email: true,
+  role: true,
+} satisfies Prisma.UserSelect;
+
+type TransactionClient = Prisma.TransactionClient;
+
+export const businessRepository = {
+  findUserById: (tx: TransactionClient, userId: string) => {
+    return tx.user.findUnique({
+      where: {
+        id: userId,
+      },
+    });
+  },
+
+  createBusiness: (tx: TransactionClient, data: Prisma.BusinessCreateInput) => {
+    return tx.business.create({
+      data,
+      include: {
+        createdBy: {
+          select: businessUserSelect,
+        },
+        assignedTo: {
+          select: businessUserSelect,
+        },
+      },
+    });
+  },
+
+  createActivity: (
+    tx: TransactionClient,
+    data: Prisma.ActivityUncheckedCreateInput,
+  ) => {
+    return tx.activity.create({
+      data,
+    });
+  },
+};
