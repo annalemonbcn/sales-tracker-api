@@ -1,4 +1,7 @@
-import type { CreateBusinessInput } from './business.schemas.js';
+import type {
+  CreateBusinessInput,
+  GetBusinessesQuery,
+} from './business.schemas.js';
 import type { Prisma } from '../../generated/prisma/client.js';
 
 export type InitialBusinessStatus = 'new_lead' | 'assigned';
@@ -62,5 +65,54 @@ export const buildBusinessAssignedActivityData = (params: {
     metadata: {
       assignedToId: params.assignedToId,
     },
+  };
+};
+
+export const buildBusinessWhere = (
+  query: GetBusinessesQuery,
+): Prisma.BusinessWhereInput => {
+  return {
+    ...(query.status ? { status: query.status } : {}),
+    ...(query.category ? { category: query.category } : {}),
+    ...(query.priority ? { priority: query.priority } : {}),
+    ...(query.source ? { source: query.source } : {}),
+    ...(query.assignedToId ? { assignedToId: query.assignedToId } : {}),
+
+    ...(query.search
+      ? {
+          OR: [
+            {
+              name: {
+                contains: query.search,
+                mode: 'insensitive',
+              },
+            },
+            {
+              instagram: {
+                contains: query.search,
+                mode: 'insensitive',
+              },
+            },
+            {
+              email: {
+                contains: query.search,
+                mode: 'insensitive',
+              },
+            },
+            {
+              phone: {
+                contains: query.search,
+                mode: 'insensitive',
+              },
+            },
+            {
+              address: {
+                contains: query.search,
+                mode: 'insensitive',
+              },
+            },
+          ],
+        }
+      : {}),
   };
 };

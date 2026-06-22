@@ -1,4 +1,10 @@
 import { z } from 'zod';
+import {
+  BusinessStatus,
+  Category,
+  LeadSource,
+  Priority,
+} from '../../generated/prisma/enums.js';
 
 const optionalTextField = z.preprocess((value) => {
   if (typeof value !== 'string') {
@@ -14,28 +20,11 @@ export const createBusinessSchema = z.object({
   body: z.object({
     name: z.string().trim().min(1, 'Business name is required'),
 
-    category: z.enum([
-      'restaurant',
-      'hairdresser',
-      'beauty_center',
-      'hotel',
-      'shop',
-      'gym',
-      'clinic',
-      'other',
-    ]),
+    category: z.enum(Category),
 
-    source: z.enum([
-      'instagram',
-      'google_maps',
-      'walk_in',
-      'referral',
-      'website',
-      'existing_contact',
-      'other',
-    ]),
+    source: z.enum(LeadSource),
 
-    priority: z.enum(['low', 'medium', 'high']).default('medium'),
+    priority: z.enum(Priority).default('medium'),
 
     instagram: optionalTextField,
     phone: optionalTextField,
@@ -50,4 +39,21 @@ export const createBusinessSchema = z.object({
   }),
 });
 
+export const getBusinessesSchema = z.object({
+  query: z.object({
+    status: z.enum(BusinessStatus).optional(),
+
+    category: z.enum(Category).optional(),
+
+    priority: z.enum(Priority).optional(),
+
+    source: z.enum(LeadSource).optional(),
+
+    assignedToId: z.uuid('Invalid assignedToId').optional(),
+
+    search: z.string().trim().min(1).optional(),
+  }),
+});
+
 export type CreateBusinessInput = z.infer<typeof createBusinessSchema>['body'];
+export type GetBusinessesQuery = z.infer<typeof getBusinessesSchema>['query'];

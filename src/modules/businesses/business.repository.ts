@@ -1,4 +1,4 @@
-import type { Prisma } from '../../generated/prisma/client.js';
+import { Prisma } from '../../generated/prisma/client.js';
 
 export const businessUserSelect = {
   id: true,
@@ -14,6 +14,26 @@ export const businessRepository = {
     return tx.user.findUnique({
       where: {
         id: userId,
+      },
+    });
+  },
+
+  findManyBusinesses: (
+    tx: TransactionClient,
+    where: Prisma.BusinessWhereInput,
+  ) => {
+    return tx.business.findMany({
+      where,
+      orderBy: {
+        createdAt: 'desc',
+      },
+      include: {
+        createdBy: {
+          select: businessUserSelect,
+        },
+        assignedTo: {
+          select: businessUserSelect,
+        },
       },
     });
   },

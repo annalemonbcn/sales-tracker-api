@@ -1,14 +1,26 @@
 import { AppError } from '../../shared/errors.js';
 import { prisma } from '../../shared/prisma.js';
-import type { CreateBusinessInput } from './business.schemas.js';
+import type {
+  CreateBusinessInput,
+  GetBusinessesQuery,
+} from './business.schemas.js';
 import {
   buildBusinessAssignedActivityData,
   buildBusinessCreatedActivityData,
   buildBusinessCreateData,
+  buildBusinessWhere,
 } from './business.prisma-mapper.js';
 import { businessRepository } from './business.repository.js';
 
 export const businessService = {
+  getBusinesses: async (query: GetBusinessesQuery) => {
+    return prisma.$transaction(async (tx) => {
+      const where = buildBusinessWhere(query);
+
+      return businessRepository.findManyBusinesses(tx, where);
+    });
+  },
+
   createBusiness: async (data: CreateBusinessInput) => {
     return prisma.$transaction(async (tx) => {
       const createdByUser = await businessRepository.findUserById(
