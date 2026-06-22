@@ -50,5 +50,4 @@ export const createBusinessSchema = z.object({
   }),
 });
 
-// TODO: unused ??
 export type CreateBusinessInput = z.infer<typeof createBusinessSchema>['body'];
