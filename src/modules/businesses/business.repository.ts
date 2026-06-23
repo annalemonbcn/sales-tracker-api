@@ -1,4 +1,4 @@
-import type { Prisma } from '../../generated/prisma/client.js';
+import { Prisma } from '../../generated/prisma/client.js';
 
 export const businessUserSelect = {
   id: true,
@@ -18,8 +18,65 @@ export const businessRepository = {
     });
   },
 
+  findBusinessById: (tx: TransactionClient, businessId: string) => {
+    return tx.business.findUnique({
+      where: {
+        id: businessId,
+      },
+      include: {
+        createdBy: {
+          select: businessUserSelect,
+        },
+        assignedTo: {
+          select: businessUserSelect,
+        },
+      },
+    });
+  },
+
+  findManyBusinesses: (
+    tx: TransactionClient,
+    where: Prisma.BusinessWhereInput,
+  ) => {
+    return tx.business.findMany({
+      where,
+      orderBy: {
+        createdAt: 'desc',
+      },
+      include: {
+        createdBy: {
+          select: businessUserSelect,
+        },
+        assignedTo: {
+          select: businessUserSelect,
+        },
+      },
+    });
+  },
+
   createBusiness: (tx: TransactionClient, data: Prisma.BusinessCreateInput) => {
     return tx.business.create({
+      data,
+      include: {
+        createdBy: {
+          select: businessUserSelect,
+        },
+        assignedTo: {
+          select: businessUserSelect,
+        },
+      },
+    });
+  },
+
+  updateBusiness: (
+    tx: TransactionClient,
+    businessId: string,
+    data: Prisma.BusinessUpdateInput,
+  ) => {
+    return tx.business.update({
+      where: {
+        id: businessId,
+      },
       data,
       include: {
         createdBy: {

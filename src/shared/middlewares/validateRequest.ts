@@ -1,18 +1,15 @@
 import type { RequestHandler } from 'express';
 import { z } from 'zod';
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const requestSchema = z.object({
-  body: z.unknown().optional(),
-  params: z.unknown().optional(),
-  query: z.unknown().optional(),
-});
-
-type RequestSchema = z.ZodType<z.infer<typeof requestSchema>>;
+type ParsedRequest = {
+  body?: unknown;
+  params?: unknown;
+  query?: unknown;
+};
 
 export const validateRequest =
-  (schema: RequestSchema): RequestHandler =>
-  (req, _res, next) => {
+  (schema: z.ZodType<ParsedRequest>): RequestHandler =>
+  (req, res, next) => {
     const result = schema.safeParse({
       body: req.body,
       params: req.params,
@@ -23,6 +20,8 @@ export const validateRequest =
       next(result.error);
       return;
     }
+
+    res.locals.validated = result.data;
 
     if (result.data.body !== undefined) {
       req.body = result.data.body;

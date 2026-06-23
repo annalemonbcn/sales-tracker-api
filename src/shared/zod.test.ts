@@ -43,4 +43,48 @@ describe('formatZodError', () => {
       expect(formatZodError(result.error)).toEqual({});
     }
   });
+
+  it('formats Zod params validation errors into a flat object', () => {
+    const schema = z.object({
+      params: z.object({
+        businessId: z.uuid('Invalid businessId'),
+      }),
+    });
+
+    const result = schema.safeParse({
+      params: {
+        businessId: 'not-a-uuid',
+      },
+    });
+
+    expect(result.success).toBe(false);
+
+    if (!result.success) {
+      expect(formatZodError(result.error)).toEqual({
+        businessId: ['Invalid businessId'],
+      });
+    }
+  });
+
+  it('formats Zod query validation errors into a flat object', () => {
+    const schema = z.object({
+      query: z.object({
+        priority: z.enum(['low', 'medium', 'high']),
+      }),
+    });
+
+    const result = schema.safeParse({
+      query: {
+        priority: 'urgent',
+      },
+    });
+
+    expect(result.success).toBe(false);
+
+    if (!result.success) {
+      expect(formatZodError(result.error)).toEqual({
+        priority: [expect.stringContaining('Invalid option')],
+      });
+    }
+  });
 });
