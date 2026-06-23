@@ -39,11 +39,17 @@ export const createBusinessSchema = z.object({
   }),
 });
 
+export type CreateBusinessInput = z.infer<typeof createBusinessSchema>['body'];
+
 export const getBusinessByIdSchema = z.object({
   params: z.object({
     businessId: z.uuid('Invalid businessId'),
   }),
 });
+
+export type GetBusinessByIdParams = z.infer<
+  typeof getBusinessByIdSchema
+>['params'];
 
 export const getBusinessesSchema = z.object({
   query: z.object({
@@ -60,6 +66,8 @@ export const getBusinessesSchema = z.object({
     search: z.string().trim().min(1).optional(),
   }),
 });
+
+export type GetBusinessesQuery = z.infer<typeof getBusinessesSchema>['query'];
 
 export const updateBusinessSchema = z.object({
   params: z.object({
@@ -92,14 +100,6 @@ export const updateBusinessSchema = z.object({
       message: 'At least one field is required',
     }),
 });
-
-export type CreateBusinessInput = z.infer<typeof createBusinessSchema>['body'];
-
-export type GetBusinessesQuery = z.infer<typeof getBusinessesSchema>['query'];
-
-export type GetBusinessByIdParams = z.infer<
-  typeof getBusinessByIdSchema
->['params'];
 
 export type UpdateBusinessInput = z.infer<typeof updateBusinessSchema>['body'];
 
