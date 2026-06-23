@@ -7,13 +7,17 @@ export const formatZodError = (error: ZodError): ValidationErrorDetails => {
 
   for (const issue of error.issues) {
     const path = issue.path;
-    const fieldName = path[0] === 'body' ? path[1] : path[0];
+
+    const fieldName =
+      path[0] === 'body' || path[0] === 'params' || path[0] === 'query'
+        ? path[1]
+        : path[0];
 
     if (!fieldName) {
       continue;
     }
 
-    const key = String(fieldName)
+    const key = String(fieldName);
 
     fieldErrors[key] ??= [];
     fieldErrors[key].push(issue.message);

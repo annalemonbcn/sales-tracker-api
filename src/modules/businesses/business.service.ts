@@ -2,6 +2,7 @@ import { AppError } from '../../shared/errors.js';
 import { prisma } from '../../shared/prisma.js';
 import type {
   CreateBusinessInput,
+  GetBusinessByIdParams,
   GetBusinessesQuery,
 } from './business.schemas.js';
 import {
@@ -13,6 +14,25 @@ import {
 import { businessRepository } from './business.repository.js';
 
 export const businessService = {
+  getBusinessById: async (params: GetBusinessByIdParams) => {
+    return prisma.$transaction(async (tx) => {
+      const business = await businessRepository.findBusinessById(
+        tx,
+        params.businessId,
+      );
+
+      if (!business) {
+        throw new AppError({
+          statusCode: 404,
+          code: 'BUSINESS_NOT_FOUND',
+          message: 'Business not found',
+        });
+      }
+
+      return business;
+    });
+  },
+
   getBusinesses: async (query: GetBusinessesQuery) => {
     return prisma.$transaction(async (tx) => {
       const where = buildBusinessWhere(query);

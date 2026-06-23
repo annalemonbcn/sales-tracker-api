@@ -39,6 +39,12 @@ export const createBusinessSchema = z.object({
   }),
 });
 
+export const getBusinessByIdSchema = z.object({
+  params: z.object({
+    businessId: z.uuid('Invalid businessId'),
+  }),
+});
+
 export const getBusinessesSchema = z.object({
   query: z.object({
     status: z.enum(BusinessStatus).optional(),
@@ -57,3 +63,4 @@ export const getBusinessesSchema = z.object({
 
 export type CreateBusinessInput = z.infer<typeof createBusinessSchema>['body'];
 export type GetBusinessesQuery = z.infer<typeof getBusinessesSchema>['query'];
+export type GetBusinessByIdParams = z.infer<typeof getBusinessByIdSchema>['params'];
