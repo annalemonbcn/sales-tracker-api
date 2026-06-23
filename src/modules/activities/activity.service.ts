@@ -6,7 +6,12 @@ import type {
   GetBusinessActivitiesParams,
 } from './activity.schemas.js';
 import { activityRepository } from './activity.repository.js';
-import { buildManualActivityCreateData } from './activity.prisma-mapper.js';
+import {
+  buildBusinessUpdateDataFromActivity,
+  buildManualActivityCreateData,
+  getNextStatusFromActivityType,
+} from './activity.prisma-mapper.js';
+import { buildStatusChangedActivityData } from '../businesses/business.prisma-mapper.js';
 
 export const activityService = {
   getBusinessActivities: async (params: GetBusinessActivitiesParams) => {
@@ -56,10 +61,41 @@ export const activityService = {
         });
       }
 
-      return activityRepository.createActivity(
+      const activity = await activityRepository.createActivity(
         tx,
         buildManualActivityCreateData(params, data),
       );
+
+      const contactedAt = new Date();
+
+      const businessUpdateData = buildBusinessUpdateDataFromActivity({
+        type: data.type,
+        contactedAt,
+      });
+
+      if (Object.keys(businessUpdateData).length > 0) {
+        await activityRepository.updateBusiness(
+          tx,
+          params.businessId,
+          businessUpdateData,
+        );
+      }
+
+      const nextStatus = getNextStatusFromActivityType(data.type);
+
+      if (nextStatus !== undefined && nextStatus !== business.status) {
+        await activityRepository.createActivity(
+          tx,
+          buildStatusChangedActivityData({
+            businessId: params.businessId,
+            userId: data.userId,
+            previousStatus: business.status,
+            nextStatus,
+          }),
+        );
+      }
+
+      return activity;
     });
   },
 };

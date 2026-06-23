@@ -17,6 +17,7 @@ export const activityRepository = {
       },
       select: {
         id: true,
+        status: true,
       },
     });
   },
@@ -59,6 +60,19 @@ export const activityRepository = {
           select: activityUserSelect,
         },
       },
+    });
+  },
+
+  updateBusiness: (
+    tx: TransactionClient,
+    businessId: string,
+    data: Prisma.BusinessUpdateInput,
+  ) => {
+    return tx.business.update({
+      where: {
+        id: businessId,
+      },
+      data,
     });
   },
 };
