@@ -21,6 +21,17 @@ export const activityRepository = {
     });
   },
 
+  findUserById: (tx: TransactionClient, userId: string) => {
+    return tx.user.findUnique({
+      where: {
+        id: userId,
+      },
+      select: {
+        id: true,
+      },
+    });
+  },
+
   findManyByBusinessId: (tx: TransactionClient, businessId: string) => {
     return tx.activity.findMany({
       where: {
@@ -29,6 +40,20 @@ export const activityRepository = {
       orderBy: {
         createdAt: 'desc',
       },
+      include: {
+        user: {
+          select: activityUserSelect,
+        },
+      },
+    });
+  },
+
+  createActivity: (
+    tx: TransactionClient,
+    data: Prisma.ActivityUncheckedCreateInput,
+  ) => {
+    return tx.activity.create({
+      data,
       include: {
         user: {
           select: activityUserSelect,
