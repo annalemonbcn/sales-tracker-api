@@ -4,7 +4,10 @@ import {
   buildBusinessAssignedActivityData,
   buildBusinessCreateData,
   buildBusinessCreatedActivityData,
+  buildBusinessUpdateData,
   buildBusinessWhere,
+  buildPriorityChangedActivityData,
+  buildStatusChangedActivityData,
 } from './business.prisma-mapper.js';
 
 import type { CreateBusinessInput } from './business.schemas.js';
@@ -224,6 +227,86 @@ describe('business prisma mapper', () => {
           },
         },
       ],
+    });
+  });
+
+  it('builds Prisma update data with only provided scalar fields', () => {
+    const result = buildBusinessUpdateData({
+      name: 'Updated Business',
+      priority: 'high',
+      notes: 'Updated notes',
+    });
+
+    expect(result).toEqual({
+      name: 'Updated Business',
+      priority: 'high',
+      notes: 'Updated notes',
+    });
+  });
+
+  it('builds Prisma update data to assign a business', () => {
+    const result = buildBusinessUpdateData({
+      assignedToId: '550e8400-e29b-41d4-a716-446655440000',
+    });
+
+    expect(result).toEqual({
+      assignedTo: {
+        connect: {
+          id: '550e8400-e29b-41d4-a716-446655440000',
+        },
+      },
+    });
+  });
+
+  it('builds Prisma update data to unassign a business', () => {
+    const result = buildBusinessUpdateData({
+      assignedToId: null,
+    });
+
+    expect(result).toEqual({
+      assignedTo: {
+        disconnect: true,
+      },
+    });
+  });
+
+  it('builds status_changed activity data', () => {
+    const result = buildStatusChangedActivityData({
+      businessId: 'business-id',
+      userId: 'user-id',
+      previousStatus: 'assigned',
+      nextStatus: 'interested',
+    });
+
+    expect(result).toEqual({
+      businessId: 'business-id',
+      userId: 'user-id',
+      type: 'status_changed',
+      notes: 'Status changed from assigned to interested',
+      metadata: {
+        previousStatus: 'assigned',
+        nextStatus: 'interested',
+      },
+    });
+  });
+
+  it('builds priority_changed activity data', () => {
+    const result = buildPriorityChangedActivityData({
+      businessId: 'business-id',
+      userId: 'user-id',
+      previousPriority: 'medium',
+      nextPriority: 'high',
+    });
+
+    expect(result).toEqual({
+      businessId: 'business-id',
+      userId: 'user-id',
+      type: 'priority_changed',
+      notes: 'Priority changed from medium to high',
+      metadata: {
+        previousPriority: 'medium',
+        nextPriority: 'high',
+      },
     });
   });
 });
