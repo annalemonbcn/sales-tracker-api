@@ -1,45 +1,4 @@
-import type {
-  BusinessStatus,
-  Category,
-  LeadSource,
-  Priority,
-  Prisma,
-  UserRole,
-} from '../../generated/prisma/client.js';
-
-type BusinessUserDto = {
-  id: string;
-  name: string;
-  email: string;
-  role: UserRole;
-};
-
-export type BusinessDto = {
-  id: string;
-  name: string;
-  category: Category;
-  status: BusinessStatus;
-  priority: Priority;
-  source: LeadSource;
-
-  details: {
-    instagram: string | null;
-    email: string | null;
-    phone: string | null;
-    website: string | null;
-    address: string | null;
-  };
-
-  notes: string | null;
-  lastContactedAt: Date | null;
-  nextFollowUpAt: Date | null;
-
-  createdBy: BusinessUserDto;
-  assignedTo: BusinessUserDto | null;
-
-  createdAt: Date;
-  updatedAt: Date;
-};
+import type { Business, Prisma, User } from '../../generated/prisma/client.js';
 
 type BusinessWithUsers = Prisma.BusinessGetPayload<{
   include: {
@@ -61,6 +20,32 @@ type BusinessWithUsers = Prisma.BusinessGetPayload<{
     };
   };
 }>;
+
+type BusinessUserDto = Pick<User, 'id' | 'name' | 'email' | 'role'>;
+
+type BusinessDetailsDto = Pick<
+  Business,
+  'instagram' | 'email' | 'phone' | 'website' | 'address'
+>;
+
+export type BusinessDto = Pick<
+  Business,
+  | 'id'
+  | 'name'
+  | 'category'
+  | 'status'
+  | 'priority'
+  | 'source'
+  | 'notes'
+  | 'lastContactedAt'
+  | 'nextFollowUpAt'
+  | 'createdAt'
+  | 'updatedAt'
+> & {
+  details: BusinessDetailsDto;
+  createdBy: BusinessUserDto;
+  assignedTo: BusinessUserDto | null;
+};
 
 export const toBusinessDto = (business: BusinessWithUsers): BusinessDto => ({
   id: business.id,

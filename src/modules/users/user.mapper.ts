@@ -1,14 +1,9 @@
-import type { User, UserRole } from '../../generated/prisma/client.js';
+import type { User } from '../../generated/prisma/client.js';
 
-export type UserDto = {
-  id: string;
-  name: string;
-  email: string;
-  role: UserRole;
-  active: boolean;
-  createdAt: Date;
-  updatedAt: Date;
-};
+export type UserDto = Pick<
+  User,
+  'id' | 'name' | 'email' | 'role' | 'active' | 'createdAt' | 'updatedAt'
+>;
 
 export const toUserDto = (user: User): UserDto => ({
   id: user.id,
