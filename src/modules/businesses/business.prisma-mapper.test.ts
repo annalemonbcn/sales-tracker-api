@@ -4,10 +4,12 @@ import {
   buildBusinessAssignedActivityData,
   buildBusinessCreateData,
   buildBusinessCreatedActivityData,
+  buildBusinessWhere,
 } from './business.prisma-mapper.js';
 
 import type { CreateBusinessInput } from './business.schemas.js';
 
+// TODO: add tests for buildBusinessWhere
 describe('business prisma mapper', () => {
   it('builds Prisma create data for an unassigned business', () => {
     const input: CreateBusinessInput = {
@@ -112,6 +114,116 @@ describe('business prisma mapper', () => {
       metadata: {
         assignedToId: 'assigned-user-id',
       },
+    });
+  });
+
+  it('builds an empty Prisma where object when no filters are provided', () => {
+    const result = buildBusinessWhere({});
+
+    expect(result).toEqual({});
+  });
+
+  it('builds Prisma where object with direct filters', () => {
+    const result = buildBusinessWhere({
+      status: 'assigned',
+      category: 'beauty_center',
+      priority: 'high',
+      source: 'google_maps',
+      assignedToId: '550e8400-e29b-41d4-a716-446655440000',
+    });
+
+    expect(result).toEqual({
+      status: 'assigned',
+      category: 'beauty_center',
+      priority: 'high',
+      source: 'google_maps',
+      assignedToId: '550e8400-e29b-41d4-a716-446655440000',
+    });
+  });
+
+  it('builds Prisma where object with search filter', () => {
+    const result = buildBusinessWhere({
+      search: 'maison',
+    });
+
+    expect(result).toEqual({
+      OR: [
+        {
+          name: {
+            contains: 'maison',
+            mode: 'insensitive',
+          },
+        },
+        {
+          instagram: {
+            contains: 'maison',
+            mode: 'insensitive',
+          },
+        },
+        {
+          email: {
+            contains: 'maison',
+            mode: 'insensitive',
+          },
+        },
+        {
+          phone: {
+            contains: 'maison',
+            mode: 'insensitive',
+          },
+        },
+        {
+          address: {
+            contains: 'maison',
+            mode: 'insensitive',
+          },
+        },
+      ],
+    });
+  });
+
+  it('builds Prisma where object combining direct filters and search', () => {
+    const result = buildBusinessWhere({
+      status: 'assigned',
+      priority: 'high',
+      search: 'maison',
+    });
+
+    expect(result).toEqual({
+      status: 'assigned',
+      priority: 'high',
+      OR: [
+        {
+          name: {
+            contains: 'maison',
+            mode: 'insensitive',
+          },
+        },
+        {
+          instagram: {
+            contains: 'maison',
+            mode: 'insensitive',
+          },
+        },
+        {
+          email: {
+            contains: 'maison',
+            mode: 'insensitive',
+          },
+        },
+        {
+          phone: {
+            contains: 'maison',
+            mode: 'insensitive',
+          },
+        },
+        {
+          address: {
+            contains: 'maison',
+            mode: 'insensitive',
+          },
+        },
+      ],
     });
   });
 });
