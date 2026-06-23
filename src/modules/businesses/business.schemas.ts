@@ -61,6 +61,48 @@ export const getBusinessesSchema = z.object({
   }),
 });
 
+export const updateBusinessSchema = z.object({
+  params: z.object({
+    businessId: z.uuid('Invalid businessId'),
+  }),
+
+  body: z
+    .object({
+      name: z.string().trim().min(1, 'Business name is required').optional(),
+
+      category: z.enum(Category).optional(),
+
+      status: z.enum(BusinessStatus).optional(),
+
+      source: z.enum(LeadSource).optional(),
+
+      priority: z.enum(Priority).optional(),
+
+      instagram: optionalTextField,
+      phone: optionalTextField,
+      address: optionalTextField,
+      notes: optionalTextField,
+
+      email: z.email('Invalid email').optional(),
+      website: z.url('Invalid website URL').optional(),
+
+      assignedToId: z.uuid('Invalid assignedToId').nullable().optional(),
+    })
+    .refine((body) => Object.keys(body).length > 0, {
+      message: 'At least one field is required',
+    }),
+});
+
 export type CreateBusinessInput = z.infer<typeof createBusinessSchema>['body'];
+
 export type GetBusinessesQuery = z.infer<typeof getBusinessesSchema>['query'];
-export type GetBusinessByIdParams = z.infer<typeof getBusinessByIdSchema>['params'];
+
+export type GetBusinessByIdParams = z.infer<
+  typeof getBusinessByIdSchema
+>['params'];
+
+export type UpdateBusinessInput = z.infer<typeof updateBusinessSchema>['body'];
+
+export type UpdateBusinessParams = z.infer<
+  typeof updateBusinessSchema
+>['params'];

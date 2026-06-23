@@ -68,6 +68,27 @@ export const businessRepository = {
     });
   },
 
+  updateBusiness: (
+    tx: TransactionClient,
+    businessId: string,
+    data: Prisma.BusinessUpdateInput,
+  ) => {
+    return tx.business.update({
+      where: {
+        id: businessId,
+      },
+      data,
+      include: {
+        createdBy: {
+          select: businessUserSelect,
+        },
+        assignedTo: {
+          select: businessUserSelect,
+        },
+      },
+    });
+  },
+
   createActivity: (
     tx: TransactionClient,
     data: Prisma.ActivityUncheckedCreateInput,

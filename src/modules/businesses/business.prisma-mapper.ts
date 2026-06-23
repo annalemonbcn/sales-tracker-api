@@ -1,6 +1,7 @@
 import type {
   CreateBusinessInput,
   GetBusinessesQuery,
+  UpdateBusinessInput,
 } from './business.schemas.js';
 import type { Prisma } from '../../generated/prisma/client.js';
 
@@ -68,6 +69,42 @@ export const buildBusinessAssignedActivityData = (params: {
   };
 };
 
+export const buildStatusChangedActivityData = (params: {
+  businessId: string;
+  userId: string;
+  previousStatus: string;
+  nextStatus: string;
+}): Prisma.ActivityUncheckedCreateInput => {
+  return {
+    businessId: params.businessId,
+    userId: params.userId,
+    type: 'status_changed',
+    notes: `Status changed from ${params.previousStatus} to ${params.nextStatus}`,
+    metadata: {
+      previousStatus: params.previousStatus,
+      nextStatus: params.nextStatus,
+    },
+  };
+};
+
+export const buildPriorityChangedActivityData = (params: {
+  businessId: string;
+  userId: string;
+  previousPriority: string;
+  nextPriority: string;
+}): Prisma.ActivityUncheckedCreateInput => {
+  return {
+    businessId: params.businessId,
+    userId: params.userId,
+    type: 'priority_changed',
+    notes: `Priority changed from ${params.previousPriority} to ${params.nextPriority}`,
+    metadata: {
+      previousPriority: params.previousPriority,
+      nextPriority: params.nextPriority,
+    },
+  };
+};
+
 export const buildBusinessWhere = (
   query: GetBusinessesQuery,
 ): Prisma.BusinessWhereInput => {
@@ -113,6 +150,41 @@ export const buildBusinessWhere = (
             },
           ],
         }
+      : {}),
+  };
+};
+
+export const buildBusinessUpdateData = (
+  data: UpdateBusinessInput,
+): Prisma.BusinessUpdateInput => {
+  return {
+    ...(data.name !== undefined ? { name: data.name } : {}),
+    ...(data.category !== undefined ? { category: data.category } : {}),
+    ...(data.status !== undefined ? { status: data.status } : {}),
+    ...(data.source !== undefined ? { source: data.source } : {}),
+    ...(data.priority !== undefined ? { priority: data.priority } : {}),
+
+    ...(data.instagram !== undefined ? { instagram: data.instagram } : {}),
+    ...(data.email !== undefined ? { email: data.email } : {}),
+    ...(data.phone !== undefined ? { phone: data.phone } : {}),
+    ...(data.website !== undefined ? { website: data.website } : {}),
+    ...(data.address !== undefined ? { address: data.address } : {}),
+    ...(data.notes !== undefined ? { notes: data.notes } : {}),
+
+    ...(data.assignedToId !== undefined
+      ? data.assignedToId === null
+        ? {
+            assignedTo: {
+              disconnect: true,
+            },
+          }
+        : {
+            assignedTo: {
+              connect: {
+                id: data.assignedToId,
+              },
+            },
+          }
       : {}),
   };
 };

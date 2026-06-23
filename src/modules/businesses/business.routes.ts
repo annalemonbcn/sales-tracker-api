@@ -4,11 +4,13 @@ import {
   createBusinessSchema,
   getBusinessByIdSchema,
   getBusinessesSchema,
+  updateBusinessSchema,
 } from './business.schemas.js';
 import {
   createBusiness,
   getBusiness,
   getBusinesses,
+  updateBusiness,
 } from './business.controller.js';
 
 export const businessRouter = Router();
@@ -22,3 +24,9 @@ businessRouter.get(
 );
 
 businessRouter.post('/', validateRequest(createBusinessSchema), createBusiness);
+
+businessRouter.patch(
+  '/:businessId',
+  validateRequest(updateBusinessSchema),
+  updateBusiness,
+);

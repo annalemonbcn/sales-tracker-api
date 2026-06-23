@@ -4,6 +4,8 @@ import type {
   CreateBusinessInput,
   GetBusinessByIdParams,
   GetBusinessesQuery,
+  UpdateBusinessInput,
+  UpdateBusinessParams,
 } from './business.schemas.js';
 import { businessService } from './business.service.js';
 import { toBusinessDto } from './business.mapper.js';
@@ -47,6 +49,21 @@ export const createBusiness: RequestHandler = async (req, res, next) => {
       },
       201,
     );
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const updateBusiness: RequestHandler = async (req, res, next) => {
+  try {
+    const params = res.locals.validated.params as UpdateBusinessParams;
+    const data = req.body as UpdateBusinessInput;
+
+    const business = await businessService.updateBusiness(params, data);
+
+    return sendSuccess(res, {
+      business: toBusinessDto(business),
+    });
   } catch (error) {
     next(error);
   }
