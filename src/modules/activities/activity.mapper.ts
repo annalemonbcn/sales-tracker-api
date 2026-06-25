@@ -1,8 +1,4 @@
-import type {
-  ActivityType,
-  Prisma,
-  UserRole,
-} from '../../generated/prisma/client.js';
+import type { Activity, Prisma, User } from '../../generated/prisma/client.js';
 
 type ActivityWithUser = Prisma.ActivityGetPayload<{
   include: {
@@ -17,20 +13,13 @@ type ActivityWithUser = Prisma.ActivityGetPayload<{
   };
 }>;
 
-type ActivityUserDto = {
-  id: string;
-  name: string;
-  email: string;
-  role: UserRole;
-};
+type ActivityUserDto = Pick<User, 'id' | 'name' | 'email' | 'role'>;
 
-export type ActivityDto = {
-  id: string;
-  type: ActivityType;
-  notes: string | null;
-  metadata: Prisma.JsonValue;
+export type ActivityDto = Pick<
+  Activity,
+  'id' | 'type' | 'notes' | 'metadata' | 'createdAt'
+> & {
   user: ActivityUserDto;
-  createdAt: Date;
 };
 
 export const toActivityDto = (activity: ActivityWithUser): ActivityDto => ({

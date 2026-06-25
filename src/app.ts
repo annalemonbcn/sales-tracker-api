@@ -5,6 +5,8 @@ import { businessRouter } from './modules/businesses/business.routes.js';
 import { notFoundHandler } from './shared/middlewares/notFoundHandler.js';
 import { errorHandler } from './shared/middlewares/errorHandler.js';
 import { activityRouter } from './modules/activities/activity.routes.js';
+import { followUpRouter } from './modules/follow-ups/follow-up.routes.js';
+import { businessFollowUpRouter } from './modules/follow-ups/business-follow-up.routes.js';
 
 export const app = express();
 
@@ -21,6 +23,8 @@ app.get('/health', (_req, res) => {
 app.use('/users', userRouter);
 app.use('/businesses', businessRouter);
 app.use('/businesses/:businessId/activities', activityRouter);
+app.use('/businesses/:businessId/follow-ups', businessFollowUpRouter);
+app.use('/follow-ups', followUpRouter);
 
 app.use(notFoundHandler);
 app.use(errorHandler);
