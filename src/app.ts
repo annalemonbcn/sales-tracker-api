@@ -23,6 +23,9 @@ app.get('/health', (_req, res) => {
   });
 });
 
+app.get('/openapi.json', (_req, res) => {
+  res.json(swaggerSpec);
+});
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.use('/users', userRouter);
