@@ -50,8 +50,13 @@ const swaggerOptions: Options = {
               type: 'number',
               example: 12,
             },
+            trendVariant: {
+              type: 'string',
+              enum: ['success', 'warning', 'danger', 'neutral'],
+              example: 'success',
+            },
           },
-          required: ['value', 'currentMonth'],
+          required: ['value', 'currentMonth', 'trendVariant'],
         },
 
         UserSummaryDto: {

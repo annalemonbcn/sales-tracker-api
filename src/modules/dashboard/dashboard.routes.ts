@@ -8,6 +8,7 @@ export const dashboardRouter = Router();
  * @openapi
  * /dashboard/summary:
  *   get:
+ *     operationId: getDashboardSummary
  *     summary: Get dashboard summary
  *     description: Returns dashboard metric cards summary.
  *     tags:
