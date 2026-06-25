@@ -2,11 +2,13 @@ import { Router } from 'express';
 
 import { validateRequest } from '../../shared/middlewares/validateRequest.js';
 import {
+  cancelFollowUp,
   createFollowUp,
   getBusinessFollowUps,
   markFollowUpDone,
 } from './follow-up.controller.js';
 import {
+  cancelFollowUpSchema,
   createFollowUpSchema,
   getBusinessFollowUpsSchema,
   markFollowUpDoneSchema,
@@ -28,4 +30,10 @@ followUpRouter.patch(
   '/:followUpId/done',
   validateRequest(markFollowUpDoneSchema),
   markFollowUpDone,
+);
+
+followUpRouter.patch(
+  '/:followUpId/cancel',
+  validateRequest(cancelFollowUpSchema),
+  cancelFollowUp,
 );

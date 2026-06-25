@@ -3,6 +3,8 @@ import { prisma } from '../../shared/prisma.js';
 import {
   buildBusinessNextFollowUpRecalculationData,
   buildBusinessNextFollowUpUpdateData,
+  buildFollowUpCancelledActivityData,
+  buildFollowUpCancelUpdateData,
   buildFollowUpCreatedActivityData,
   buildFollowUpCreateData,
   buildFollowUpDoneActivityData,
@@ -11,6 +13,7 @@ import {
 } from './follow-up.prisma-mapper.js';
 import { followUpRepository } from './follow-up.repository.js';
 import type {
+  CancelFollowUpParams,
   CreateFollowUpInput,
   CreateFollowUpParams,
   GetBusinessFollowUpsParams,
@@ -139,6 +142,66 @@ export const followUpService = {
           userId: followUp.assignedToId,
           followUpId: followUp.id,
           completedAt,
+        }),
+      );
+
+      const nextPendingFollowUp =
+        await followUpRepository.findNextPendingByBusinessId(
+          tx,
+          followUp.businessId,
+        );
+
+      await followUpRepository.updateBusiness(
+        tx,
+        followUp.businessId,
+        buildBusinessNextFollowUpRecalculationData(
+          nextPendingFollowUp?.dueDate ?? null,
+        ),
+      );
+
+      return updatedFollowUp;
+    });
+  },
+
+  cancelFollowUp: async (params: CancelFollowUpParams) => {
+    return prisma.$transaction(async (tx) => {
+      const followUp = await followUpRepository.findById(tx, params.followUpId);
+
+      if (!followUp) {
+        throw new AppError({
+          statusCode: 404,
+          code: 'FOLLOW_UP_NOT_FOUND',
+          message: 'Follow-up not found',
+        });
+      }
+
+      if (followUp.status === 'done') {
+        throw new AppError({
+          statusCode: 409,
+          code: 'FOLLOW_UP_ALREADY_DONE',
+          message: 'Done follow-ups cannot be cancelled',
+        });
+      }
+
+      if (followUp.status === 'cancelled') {
+        return followUp;
+      }
+
+      const cancelledAt = new Date();
+
+      const updatedFollowUp = await followUpRepository.updateFollowUp(
+        tx,
+        params.followUpId,
+        buildFollowUpCancelUpdateData(),
+      );
+
+      await followUpRepository.createActivity(
+        tx,
+        buildFollowUpCancelledActivityData({
+          businessId: followUp.businessId,
+          userId: followUp.assignedToId,
+          followUpId: followUp.id,
+          cancelledAt,
         }),
       );
 

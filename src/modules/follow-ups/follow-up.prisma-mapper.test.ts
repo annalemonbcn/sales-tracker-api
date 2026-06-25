@@ -4,6 +4,8 @@ import { ActivityType, FollowUpStatus } from '../../generated/prisma/enums.js';
 import {
   buildBusinessNextFollowUpRecalculationData,
   buildBusinessNextFollowUpUpdateData,
+  buildFollowUpCancelUpdateData,
+  buildFollowUpCancelledActivityData,
   buildFollowUpCreateData,
   buildFollowUpCreatedActivityData,
   buildFollowUpDoneActivityData,
@@ -185,6 +187,40 @@ describe('buildBusinessNextFollowUpRecalculationData', () => {
 
     expect(result).toEqual({
       nextFollowUpAt: null,
+    });
+  });
+});
+
+describe('buildFollowUpCancelUpdateData', () => {
+  it('builds Prisma update data to cancel a follow-up', () => {
+    const result = buildFollowUpCancelUpdateData();
+
+    expect(result).toEqual({
+      status: FollowUpStatus.cancelled,
+    });
+  });
+});
+
+describe('buildFollowUpCancelledActivityData', () => {
+  it('builds activity data for follow_up_cancelled', () => {
+    const cancelledAt = new Date('2026-07-05T11:00:00.000Z');
+
+    const result = buildFollowUpCancelledActivityData({
+      businessId: 'business-id',
+      userId: 'user-id',
+      followUpId: 'follow-up-id',
+      cancelledAt,
+    });
+
+    expect(result).toEqual({
+      businessId: 'business-id',
+      userId: 'user-id',
+      type: ActivityType.follow_up_cancelled,
+      notes: 'Follow-up cancelled at 2026-07-05T11:00:00.000Z',
+      metadata: {
+        followUpId: 'follow-up-id',
+        cancelledAt: '2026-07-05T11:00:00.000Z',
+      },
     });
   });
 });

@@ -41,3 +41,13 @@ export const markFollowUpDoneSchema = z.object({
 export type MarkFollowUpDoneParams = z.infer<
   typeof markFollowUpDoneSchema
 >['params'];
+
+export const cancelFollowUpSchema = z.object({
+  params: z.object({
+    followUpId: z.uuid('Invalid followUpId'),
+  }),
+});
+
+export type CancelFollowUpParams = z.infer<
+  typeof cancelFollowUpSchema
+>['params'];

@@ -4,6 +4,7 @@ import { sendSuccess } from '../../shared/http.js';
 import { followUpService } from './follow-up.service.js';
 import { toFollowUpDto } from './follow-up.mapper.js';
 import type {
+  CancelFollowUpParams,
   CreateFollowUpInput,
   CreateFollowUpParams,
   GetBusinessFollowUpsParams,
@@ -48,6 +49,20 @@ export const markFollowUpDone: RequestHandler = async (_req, res, next) => {
     const params = res.locals.validated.params as MarkFollowUpDoneParams;
 
     const followUp = await followUpService.markFollowUpDone(params);
+
+    return sendSuccess(res, {
+      followUp: toFollowUpDto(followUp),
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const cancelFollowUp: RequestHandler = async (_req, res, next) => {
+  try {
+    const params = res.locals.validated.params as CancelFollowUpParams;
+
+    const followUp = await followUpService.cancelFollowUp(params);
 
     return sendSuccess(res, {
       followUp: toFollowUpDto(followUp),

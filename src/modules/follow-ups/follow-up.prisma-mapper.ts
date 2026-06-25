@@ -89,3 +89,27 @@ export const buildBusinessNextFollowUpRecalculationData = (
     nextFollowUpAt,
   };
 };
+
+export const buildFollowUpCancelUpdateData = (): Prisma.FollowUpUpdateInput => {
+  return {
+    status: FollowUpStatus.cancelled,
+  };
+};
+
+export const buildFollowUpCancelledActivityData = (params: {
+  businessId: string;
+  userId: string;
+  followUpId: string;
+  cancelledAt: Date;
+}): Prisma.ActivityUncheckedCreateInput => {
+  return {
+    businessId: params.businessId,
+    userId: params.userId,
+    type: ActivityType.follow_up_cancelled,
+    notes: `Follow-up cancelled at ${params.cancelledAt.toISOString()}`,
+    metadata: {
+      followUpId: params.followUpId,
+      cancelledAt: params.cancelledAt.toISOString(),
+    },
+  };
+};
