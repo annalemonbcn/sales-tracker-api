@@ -3,7 +3,11 @@ import type { RequestHandler } from 'express';
 import { sendSuccess } from '../../shared/http.js';
 import { followUpService } from './follow-up.service.js';
 import { toFollowUpDto } from './follow-up.mapper.js';
-import type { GetBusinessFollowUpsParams } from './follow-up.schemas.js';
+import type {
+  CreateFollowUpInput,
+  CreateFollowUpParams,
+  GetBusinessFollowUpsParams,
+} from './follow-up.schemas.js';
 
 export const getBusinessFollowUps: RequestHandler = async (_req, res, next) => {
   try {
@@ -14,6 +18,25 @@ export const getBusinessFollowUps: RequestHandler = async (_req, res, next) => {
     return sendSuccess(res, {
       followUps: followUps.map(toFollowUpDto),
     });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const createFollowUp: RequestHandler = async (req, res, next) => {
+  try {
+    const params = res.locals.validated.params as CreateFollowUpParams;
+    const data = req.body as CreateFollowUpInput;
+
+    const followUp = await followUpService.createFollowUp(params, data);
+
+    return sendSuccess(
+      res,
+      {
+        followUp: toFollowUpDto(followUp),
+      },
+      201,
+    );
   } catch (error) {
     next(error);
   }

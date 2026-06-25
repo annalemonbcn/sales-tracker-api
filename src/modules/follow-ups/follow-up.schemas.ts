@@ -9,3 +9,25 @@ export const getBusinessFollowUpsSchema = z.object({
 export type GetBusinessFollowUpsParams = z.infer<
   typeof getBusinessFollowUpsSchema
 >['params'];
+
+export const createFollowUpSchema = z.object({
+  params: z.object({
+    businessId: z.uuid('Invalid businessId'),
+  }),
+
+  body: z.object({
+    assignedToId: z.uuid('Invalid assignedToId'),
+
+    dueDate: z.iso
+      .datetime('Invalid dueDate')
+      .transform((value) => new Date(value)),
+
+    note: z.string().trim().min(1, 'Follow-up note is required').optional(),
+  }),
+});
+
+export type CreateFollowUpParams = z.infer<
+  typeof createFollowUpSchema
+>['params'];
+
+export type CreateFollowUpInput = z.infer<typeof createFollowUpSchema>['body'];

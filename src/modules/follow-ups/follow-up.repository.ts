@@ -17,6 +17,18 @@ export const followUpRepository = {
       },
       select: {
         id: true,
+        nextFollowUpAt: true,
+      },
+    });
+  },
+
+  findUserById: (tx: TransactionClient, userId: string) => {
+    return tx.user.findUnique({
+      where: {
+        id: userId,
+      },
+      select: {
+        id: true,
       },
     });
   },
@@ -39,6 +51,42 @@ export const followUpRepository = {
           select: followUpUserSelect,
         },
       },
+    });
+  },
+
+  createFollowUp: (
+    tx: TransactionClient,
+    data: Prisma.FollowUpUncheckedCreateInput,
+  ) => {
+    return tx.followUp.create({
+      data,
+      include: {
+        assignedTo: {
+          select: followUpUserSelect,
+        },
+      },
+    });
+  },
+
+  createActivity: (
+    tx: TransactionClient,
+    data: Prisma.ActivityUncheckedCreateInput,
+  ) => {
+    return tx.activity.create({
+      data,
+    });
+  },
+
+  updateBusiness: (
+    tx: TransactionClient,
+    businessId: string,
+    data: Prisma.BusinessUpdateInput,
+  ) => {
+    return tx.business.update({
+      where: {
+        id: businessId,
+      },
+      data,
     });
   },
 };
