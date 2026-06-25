@@ -53,6 +53,79 @@ const swaggerOptions: Options = {
           },
           required: ['value', 'currentMonth'],
         },
+
+        UserSummaryDto: {
+          type: 'object',
+          properties: {
+            id: {
+              type: 'string',
+              format: 'uuid',
+              example: '550e8400-e29b-41d4-a716-446655440000',
+            },
+            name: {
+              type: 'string',
+              example: 'Anna',
+            },
+            email: {
+              type: 'string',
+              format: 'email',
+              example: 'anna@example.com',
+            },
+            role: {
+              type: 'string',
+              example: 'admin',
+            },
+          },
+          required: ['id', 'name', 'email', 'role'],
+        },
+
+        UserDto: {
+          type: 'object',
+          properties: {
+            id: {
+              type: 'string',
+              format: 'uuid',
+              example: '550e8400-e29b-41d4-a716-446655440000',
+            },
+            name: {
+              type: 'string',
+              example: 'Anna',
+            },
+            email: {
+              type: 'string',
+              format: 'email',
+              example: 'anna@example.com',
+            },
+            role: {
+              type: 'string',
+              example: 'admin',
+            },
+            active: {
+              type: 'boolean',
+              example: true,
+            },
+            createdAt: {
+              type: 'string',
+              format: 'date-time',
+              example: '2026-06-25T10:00:00.000Z',
+            },
+            updatedAt: {
+              type: 'string',
+              format: 'date-time',
+              example: '2026-06-25T10:30:00.000Z',
+            },
+          },
+          required: [
+            'id',
+            'name',
+            'email',
+            'role',
+            'active',
+            'createdAt',
+            'updatedAt',
+          ],
+        },
+
         ErrorResponse: {
           type: 'object',
           properties: {
