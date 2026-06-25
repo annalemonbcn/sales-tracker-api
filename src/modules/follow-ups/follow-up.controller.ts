@@ -7,6 +7,7 @@ import type {
   CreateFollowUpInput,
   CreateFollowUpParams,
   GetBusinessFollowUpsParams,
+  MarkFollowUpDoneParams,
 } from './follow-up.schemas.js';
 
 export const getBusinessFollowUps: RequestHandler = async (_req, res, next) => {
@@ -37,6 +38,20 @@ export const createFollowUp: RequestHandler = async (req, res, next) => {
       },
       201,
     );
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const markFollowUpDone: RequestHandler = async (_req, res, next) => {
+  try {
+    const params = res.locals.validated.params as MarkFollowUpDoneParams;
+
+    const followUp = await followUpService.markFollowUpDone(params);
+
+    return sendSuccess(res, {
+      followUp: toFollowUpDto(followUp),
+    });
   } catch (error) {
     next(error);
   }

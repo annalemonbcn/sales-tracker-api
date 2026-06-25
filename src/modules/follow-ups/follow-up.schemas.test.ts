@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import {
   createFollowUpSchema,
   getBusinessFollowUpsSchema,
+  markFollowUpDoneSchema,
 } from './follow-up.schemas.js';
 
 describe('getBusinessFollowUpsSchema', () => {
@@ -159,6 +160,32 @@ describe('createFollowUpSchema', () => {
 
     if (result.success) {
       expect(result.data.body.note).toBe('Call the business');
+    }
+  });
+});
+
+describe('markFollowUpDoneSchema', () => {
+  it('accepts a valid followUpId param', () => {
+    const result = markFollowUpDoneSchema.safeParse({
+      params: {
+        followUpId: '550e8400-e29b-41d4-a716-446655440000',
+      },
+    });
+
+    expect(result.success).toBe(true);
+  });
+
+  it('rejects an invalid followUpId param', () => {
+    const result = markFollowUpDoneSchema.safeParse({
+      params: {
+        followUpId: 'not-a-uuid',
+      },
+    });
+
+    expect(result.success).toBe(false);
+
+    if (!result.success) {
+      expect(result.error.issues[0]?.message).toBe('Invalid followUpId');
     }
   });
 });

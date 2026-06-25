@@ -31,3 +31,13 @@ export type CreateFollowUpParams = z.infer<
 >['params'];
 
 export type CreateFollowUpInput = z.infer<typeof createFollowUpSchema>['body'];
+
+export const markFollowUpDoneSchema = z.object({
+  params: z.object({
+    followUpId: z.uuid('Invalid followUpId'),
+  }),
+});
+
+export type MarkFollowUpDoneParams = z.infer<
+  typeof markFollowUpDoneSchema
+>['params'];

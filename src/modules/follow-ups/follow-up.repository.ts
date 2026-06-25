@@ -89,4 +89,50 @@ export const followUpRepository = {
       data,
     });
   },
+
+  findById: (tx: TransactionClient, followUpId: string) => {
+    return tx.followUp.findUnique({
+      where: {
+        id: followUpId,
+      },
+      include: {
+        assignedTo: {
+          select: followUpUserSelect,
+        },
+      },
+    });
+  },
+
+  updateFollowUp: (
+    tx: TransactionClient,
+    followUpId: string,
+    data: Prisma.FollowUpUpdateInput,
+  ) => {
+    return tx.followUp.update({
+      where: {
+        id: followUpId,
+      },
+      data,
+      include: {
+        assignedTo: {
+          select: followUpUserSelect,
+        },
+      },
+    });
+  },
+
+  findNextPendingByBusinessId: (tx: TransactionClient, businessId: string) => {
+    return tx.followUp.findFirst({
+      where: {
+        businessId,
+        status: 'pending',
+      },
+      orderBy: {
+        dueDate: 'asc',
+      },
+      select: {
+        dueDate: true,
+      },
+    });
+  },
 };

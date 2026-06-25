@@ -22,7 +22,9 @@ app.get('/health', (_req, res) => {
 app.use('/users', userRouter);
 app.use('/businesses', businessRouter);
 app.use('/businesses/:businessId/activities', activityRouter);
+// TODO: separate in 2 routers?
 app.use('/businesses/:businessId/follow-ups', followUpRouter);
+app.use('/follow-ups', followUpRouter);
 
 app.use(notFoundHandler);
 app.use(errorHandler);

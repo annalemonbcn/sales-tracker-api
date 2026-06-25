@@ -54,3 +54,38 @@ export const buildBusinessNextFollowUpUpdateData = (
     nextFollowUpAt: dueDate,
   };
 };
+
+export const buildFollowUpDoneUpdateData = (
+  completedAt: Date,
+): Prisma.FollowUpUpdateInput => {
+  return {
+    status: FollowUpStatus.done,
+    completedAt,
+  };
+};
+
+export const buildFollowUpDoneActivityData = (params: {
+  businessId: string;
+  userId: string;
+  followUpId: string;
+  completedAt: Date;
+}): Prisma.ActivityUncheckedCreateInput => {
+  return {
+    businessId: params.businessId,
+    userId: params.userId,
+    type: ActivityType.follow_up_done,
+    notes: `Follow-up completed at ${params.completedAt.toISOString()}`,
+    metadata: {
+      followUpId: params.followUpId,
+      completedAt: params.completedAt.toISOString(),
+    },
+  };
+};
+
+export const buildBusinessNextFollowUpRecalculationData = (
+  nextFollowUpAt: Date | null,
+): Prisma.BusinessUpdateInput => {
+  return {
+    nextFollowUpAt,
+  };
+};

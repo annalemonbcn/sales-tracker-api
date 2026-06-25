@@ -2,9 +2,12 @@ import { describe, expect, it } from 'vitest';
 
 import { ActivityType, FollowUpStatus } from '../../generated/prisma/enums.js';
 import {
+  buildBusinessNextFollowUpRecalculationData,
   buildBusinessNextFollowUpUpdateData,
   buildFollowUpCreateData,
   buildFollowUpCreatedActivityData,
+  buildFollowUpDoneActivityData,
+  buildFollowUpDoneUpdateData,
   shouldUpdateNextFollowUpAt,
 } from './follow-up.prisma-mapper.js';
 
@@ -125,6 +128,63 @@ describe('buildBusinessNextFollowUpUpdateData', () => {
 
     expect(result).toEqual({
       nextFollowUpAt: dueDate,
+    });
+  });
+});
+
+describe('buildFollowUpDoneUpdateData', () => {
+  it('builds Prisma update data to mark a follow-up as done', () => {
+    const completedAt = new Date('2026-07-05T11:00:00.000Z');
+
+    const result = buildFollowUpDoneUpdateData(completedAt);
+
+    expect(result).toEqual({
+      status: FollowUpStatus.done,
+      completedAt,
+    });
+  });
+});
+
+describe('buildFollowUpDoneActivityData', () => {
+  it('builds activity data for follow_up_done', () => {
+    const completedAt = new Date('2026-07-05T11:00:00.000Z');
+
+    const result = buildFollowUpDoneActivityData({
+      businessId: 'business-id',
+      userId: 'user-id',
+      followUpId: 'follow-up-id',
+      completedAt,
+    });
+
+    expect(result).toEqual({
+      businessId: 'business-id',
+      userId: 'user-id',
+      type: ActivityType.follow_up_done,
+      notes: 'Follow-up completed at 2026-07-05T11:00:00.000Z',
+      metadata: {
+        followUpId: 'follow-up-id',
+        completedAt: '2026-07-05T11:00:00.000Z',
+      },
+    });
+  });
+});
+
+describe('buildBusinessNextFollowUpRecalculationData', () => {
+  it('builds Prisma update data with the next pending follow-up date', () => {
+    const nextFollowUpAt = new Date('2026-07-10T10:00:00.000Z');
+
+    const result = buildBusinessNextFollowUpRecalculationData(nextFollowUpAt);
+
+    expect(result).toEqual({
+      nextFollowUpAt,
+    });
+  });
+
+  it('builds Prisma update data with nextFollowUpAt as null when there are no pending follow-ups', () => {
+    const result = buildBusinessNextFollowUpRecalculationData(null);
+
+    expect(result).toEqual({
+      nextFollowUpAt: null,
     });
   });
 });

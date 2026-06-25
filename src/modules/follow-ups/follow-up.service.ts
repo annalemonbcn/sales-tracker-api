@@ -1,9 +1,12 @@
 import { AppError } from '../../shared/errors.js';
 import { prisma } from '../../shared/prisma.js';
 import {
+  buildBusinessNextFollowUpRecalculationData,
   buildBusinessNextFollowUpUpdateData,
   buildFollowUpCreatedActivityData,
   buildFollowUpCreateData,
+  buildFollowUpDoneActivityData,
+  buildFollowUpDoneUpdateData,
   shouldUpdateNextFollowUpAt,
 } from './follow-up.prisma-mapper.js';
 import { followUpRepository } from './follow-up.repository.js';
@@ -11,6 +14,7 @@ import type {
   CreateFollowUpInput,
   CreateFollowUpParams,
   GetBusinessFollowUpsParams,
+  MarkFollowUpDoneParams,
 } from './follow-up.schemas.js';
 
 export const followUpService = {
@@ -93,6 +97,66 @@ export const followUpService = {
       }
 
       return followUp;
+    });
+  },
+
+  markFollowUpDone: async (params: MarkFollowUpDoneParams) => {
+    return prisma.$transaction(async (tx) => {
+      const followUp = await followUpRepository.findById(tx, params.followUpId);
+
+      if (!followUp) {
+        throw new AppError({
+          statusCode: 404,
+          code: 'FOLLOW_UP_NOT_FOUND',
+          message: 'Follow-up not found',
+        });
+      }
+
+      if (followUp.status === 'cancelled') {
+        throw new AppError({
+          statusCode: 409,
+          code: 'FOLLOW_UP_CANCELLED',
+          message: 'Cancelled follow-ups cannot be marked as done',
+        });
+      }
+
+      if (followUp.status === 'done') {
+        return followUp;
+      }
+
+      const completedAt = new Date();
+
+      const updatedFollowUp = await followUpRepository.updateFollowUp(
+        tx,
+        params.followUpId,
+        buildFollowUpDoneUpdateData(completedAt),
+      );
+
+      await followUpRepository.createActivity(
+        tx,
+        buildFollowUpDoneActivityData({
+          businessId: followUp.businessId,
+          userId: followUp.assignedToId,
+          followUpId: followUp.id,
+          completedAt,
+        }),
+      );
+
+      const nextPendingFollowUp =
+        await followUpRepository.findNextPendingByBusinessId(
+          tx,
+          followUp.businessId,
+        );
+
+      await followUpRepository.updateBusiness(
+        tx,
+        followUp.businessId,
+        buildBusinessNextFollowUpRecalculationData(
+          nextPendingFollowUp?.dueDate ?? null,
+        ),
+      );
+
+      return updatedFollowUp;
     });
   },
 };
