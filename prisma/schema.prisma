@@ -75,6 +75,7 @@ enum ActivityType {
   follow_up_created
   follow_up_done
   follow_up_cancelled
+  follow_up_updated
   status_changed
   priority_changed
   note_added

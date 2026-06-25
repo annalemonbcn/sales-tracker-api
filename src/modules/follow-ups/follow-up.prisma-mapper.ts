@@ -3,6 +3,7 @@ import { ActivityType, FollowUpStatus } from '../../generated/prisma/enums.js';
 import type {
   CreateFollowUpInput,
   CreateFollowUpParams,
+  UpdateFollowUpInput,
 } from './follow-up.schemas.js';
 
 export const buildFollowUpCreateData = (
@@ -110,6 +111,54 @@ export const buildFollowUpCancelledActivityData = (params: {
     metadata: {
       followUpId: params.followUpId,
       cancelledAt: params.cancelledAt.toISOString(),
+    },
+  };
+};
+
+export const buildFollowUpUpdateData = (
+  data: UpdateFollowUpInput,
+): Prisma.FollowUpUpdateInput => {
+  return {
+    ...(data.assignedToId !== undefined
+      ? {
+          assignedTo: {
+            connect: {
+              id: data.assignedToId,
+            },
+          },
+        }
+      : {}),
+
+    ...(data.dueDate !== undefined
+      ? {
+          dueDate: data.dueDate,
+        }
+      : {}),
+
+    ...(data.note !== undefined
+      ? {
+          note: data.note,
+        }
+      : {}),
+  };
+};
+
+export const buildFollowUpUpdatedActivityData = (params: {
+  businessId: string;
+  userId: string;
+  followUpId: string;
+  previousDueDate: Date;
+  nextDueDate: Date;
+}): Prisma.ActivityUncheckedCreateInput => {
+  return {
+    businessId: params.businessId,
+    userId: params.userId,
+    type: ActivityType.follow_up_updated,
+    notes: `Follow-up updated from ${params.previousDueDate.toISOString()} to ${params.nextDueDate.toISOString()}`,
+    metadata: {
+      followUpId: params.followUpId,
+      previousDueDate: params.previousDueDate.toISOString(),
+      nextDueDate: params.nextDueDate.toISOString(),
     },
   };
 };

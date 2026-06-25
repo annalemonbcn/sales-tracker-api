@@ -6,12 +6,14 @@ import {
   createFollowUp,
   getBusinessFollowUps,
   markFollowUpDone,
+  updateFollowUp,
 } from './follow-up.controller.js';
 import {
   cancelFollowUpSchema,
   createFollowUpSchema,
   getBusinessFollowUpsSchema,
   markFollowUpDoneSchema,
+  updateFollowUpSchema,
 } from './follow-up.schemas.js';
 
 export const followUpRouter = Router({
@@ -25,6 +27,12 @@ followUpRouter.get(
 );
 
 followUpRouter.post('/', validateRequest(createFollowUpSchema), createFollowUp);
+
+followUpRouter.patch(
+  '/:followUpId',
+  validateRequest(updateFollowUpSchema),
+  updateFollowUp,
+);
 
 followUpRouter.patch(
   '/:followUpId/done',

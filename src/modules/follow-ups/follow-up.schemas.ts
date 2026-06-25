@@ -51,3 +51,30 @@ export const cancelFollowUpSchema = z.object({
 export type CancelFollowUpParams = z.infer<
   typeof cancelFollowUpSchema
 >['params'];
+
+export const updateFollowUpSchema = z.object({
+  params: z.object({
+    followUpId: z.uuid('Invalid followUpId'),
+  }),
+
+  body: z
+    .object({
+      assignedToId: z.uuid('Invalid assignedToId').optional(),
+
+      dueDate: z.iso
+        .datetime('Invalid dueDate')
+        .transform((value) => new Date(value))
+        .optional(),
+
+      note: z.string().trim().min(1, 'Follow-up note is required').optional(),
+    })
+    .refine((body) => Object.keys(body).length > 0, {
+      message: 'At least one field is required',
+    }),
+});
+
+export type UpdateFollowUpParams = z.infer<
+  typeof updateFollowUpSchema
+>['params'];
+
+export type UpdateFollowUpInput = z.infer<typeof updateFollowUpSchema>['body'];

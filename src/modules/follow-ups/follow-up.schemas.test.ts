@@ -5,6 +5,7 @@ import {
   createFollowUpSchema,
   getBusinessFollowUpsSchema,
   markFollowUpDoneSchema,
+  updateFollowUpSchema,
 } from './follow-up.schemas.js';
 
 describe('getBusinessFollowUpsSchema', () => {
@@ -213,6 +214,178 @@ describe('cancelFollowUpSchema', () => {
 
     if (!result.success) {
       expect(result.error.issues[0]?.message).toBe('Invalid followUpId');
+    }
+  });
+});
+
+describe('updateFollowUpSchema', () => {
+  it('accepts a valid dueDate update', () => {
+    const result = updateFollowUpSchema.safeParse({
+      params: {
+        followUpId: '550e8400-e29b-41d4-a716-446655440000',
+      },
+      body: {
+        dueDate: '2026-07-05T10:00:00.000Z',
+      },
+    });
+
+    expect(result.success).toBe(true);
+
+    if (result.success) {
+      expect(result.data.body.dueDate).toBeInstanceOf(Date);
+    }
+  });
+
+  it('accepts a valid assignedToId update', () => {
+    const result = updateFollowUpSchema.safeParse({
+      params: {
+        followUpId: '550e8400-e29b-41d4-a716-446655440000',
+      },
+      body: {
+        assignedToId: '660e8400-e29b-41d4-a716-446655440000',
+      },
+    });
+
+    expect(result.success).toBe(true);
+  });
+
+  it('accepts a valid note update', () => {
+    const result = updateFollowUpSchema.safeParse({
+      params: {
+        followUpId: '550e8400-e29b-41d4-a716-446655440000',
+      },
+      body: {
+        note: 'Call the business next week.',
+      },
+    });
+
+    expect(result.success).toBe(true);
+
+    if (result.success) {
+      expect(result.data.body.note).toBe('Call the business next week.');
+    }
+  });
+
+  it('trims note before returning the parsed body', () => {
+    const result = updateFollowUpSchema.safeParse({
+      params: {
+        followUpId: '550e8400-e29b-41d4-a716-446655440000',
+      },
+      body: {
+        note: '  Call the business next week.  ',
+      },
+    });
+
+    expect(result.success).toBe(true);
+
+    if (result.success) {
+      expect(result.data.body.note).toBe('Call the business next week.');
+    }
+  });
+
+  it('accepts updating several allowed fields at once', () => {
+    const result = updateFollowUpSchema.safeParse({
+      params: {
+        followUpId: '550e8400-e29b-41d4-a716-446655440000',
+      },
+      body: {
+        assignedToId: '660e8400-e29b-41d4-a716-446655440000',
+        dueDate: '2026-07-05T10:00:00.000Z',
+        note: 'Visit the business in person.',
+      },
+    });
+
+    expect(result.success).toBe(true);
+
+    if (result.success) {
+      expect(result.data.body.dueDate).toBeInstanceOf(Date);
+    }
+  });
+
+  it('rejects an empty update body', () => {
+    const result = updateFollowUpSchema.safeParse({
+      params: {
+        followUpId: '550e8400-e29b-41d4-a716-446655440000',
+      },
+      body: {},
+    });
+
+    expect(result.success).toBe(false);
+
+    if (!result.success) {
+      expect(result.error.issues[0]?.message).toBe(
+        'At least one field is required',
+      );
+    }
+  });
+
+  it('rejects an invalid followUpId param', () => {
+    const result = updateFollowUpSchema.safeParse({
+      params: {
+        followUpId: 'not-a-uuid',
+      },
+      body: {
+        note: 'Call next week.',
+      },
+    });
+
+    expect(result.success).toBe(false);
+
+    if (!result.success) {
+      expect(result.error.issues[0]?.message).toBe('Invalid followUpId');
+    }
+  });
+
+  it('rejects an invalid assignedToId', () => {
+    const result = updateFollowUpSchema.safeParse({
+      params: {
+        followUpId: '550e8400-e29b-41d4-a716-446655440000',
+      },
+      body: {
+        assignedToId: 'not-a-uuid',
+      },
+    });
+
+    expect(result.success).toBe(false);
+
+    if (!result.success) {
+      expect(result.error.issues[0]?.message).toBe('Invalid assignedToId');
+    }
+  });
+
+  it('rejects an invalid dueDate', () => {
+    const result = updateFollowUpSchema.safeParse({
+      params: {
+        followUpId: '550e8400-e29b-41d4-a716-446655440000',
+      },
+      body: {
+        dueDate: 'not-a-date',
+      },
+    });
+
+    expect(result.success).toBe(false);
+
+    if (!result.success) {
+      expect(result.error.issues[0]?.message).toBe('Invalid dueDate');
+    }
+  });
+
+  it('rejects an empty note when note is provided', () => {
+    const result = updateFollowUpSchema.safeParse({
+      params: {
+        followUpId: '550e8400-e29b-41d4-a716-446655440000',
+      },
+      body: {
+        note: '',
+      },
+    });
+
+    expect(result.success).toBe(false);
+
+    if (!result.success) {
+      expect(result.error.issues[0]?.message).toBe(
+        'Follow-up note is required',
+      );
     }
   });
 });

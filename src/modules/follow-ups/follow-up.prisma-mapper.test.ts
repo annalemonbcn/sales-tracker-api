@@ -10,6 +10,8 @@ import {
   buildFollowUpCreatedActivityData,
   buildFollowUpDoneActivityData,
   buildFollowUpDoneUpdateData,
+  buildFollowUpUpdateData,
+  buildFollowUpUpdatedActivityData,
   shouldUpdateNextFollowUpAt,
 } from './follow-up.prisma-mapper.js';
 
@@ -220,6 +222,101 @@ describe('buildFollowUpCancelledActivityData', () => {
       metadata: {
         followUpId: 'follow-up-id',
         cancelledAt: '2026-07-05T11:00:00.000Z',
+      },
+    });
+  });
+});
+
+describe('buildFollowUpUpdateData', () => {
+  it('builds update data for dueDate', () => {
+    const dueDate = new Date('2026-07-05T10:00:00.000Z');
+
+    const result = buildFollowUpUpdateData({
+      dueDate,
+    });
+
+    expect(result).toEqual({
+      dueDate,
+    });
+  });
+
+  it('builds update data for assignedToId', () => {
+    const result = buildFollowUpUpdateData({
+      assignedToId: '660e8400-e29b-41d4-a716-446655440000',
+    });
+
+    expect(result).toEqual({
+      assignedTo: {
+        connect: {
+          id: '660e8400-e29b-41d4-a716-446655440000',
+        },
+      },
+    });
+  });
+
+  it('builds update data for note', () => {
+    const result = buildFollowUpUpdateData({
+      note: 'Call the business next week.',
+    });
+
+    expect(result).toEqual({
+      note: 'Call the business next week.',
+    });
+  });
+
+  it('builds update data for several fields at once', () => {
+    const dueDate = new Date('2026-07-05T10:00:00.000Z');
+
+    const result = buildFollowUpUpdateData({
+      assignedToId: '660e8400-e29b-41d4-a716-446655440000',
+      dueDate,
+      note: 'Visit the business in person.',
+    });
+
+    expect(result).toEqual({
+      assignedTo: {
+        connect: {
+          id: '660e8400-e29b-41d4-a716-446655440000',
+        },
+      },
+      dueDate,
+      note: 'Visit the business in person.',
+    });
+  });
+
+  it('does not include fields that were not provided', () => {
+    const result = buildFollowUpUpdateData({
+      note: 'Only update note.',
+    });
+
+    expect(result).not.toHaveProperty('dueDate');
+    expect(result).not.toHaveProperty('assignedTo');
+  });
+});
+
+describe('buildFollowUpUpdatedActivityData', () => {
+  it('builds follow_up_updated activity data', () => {
+    const previousDueDate = new Date('2026-07-05T10:00:00.000Z');
+    const nextDueDate = new Date('2026-07-08T12:00:00.000Z');
+
+    const result = buildFollowUpUpdatedActivityData({
+      businessId: 'business-id',
+      userId: 'user-id',
+      followUpId: 'follow-up-id',
+      previousDueDate,
+      nextDueDate,
+    });
+
+    expect(result).toEqual({
+      businessId: 'business-id',
+      userId: 'user-id',
+      type: ActivityType.follow_up_updated,
+      notes:
+        'Follow-up updated from 2026-07-05T10:00:00.000Z to 2026-07-08T12:00:00.000Z',
+      metadata: {
+        followUpId: 'follow-up-id',
+        previousDueDate: '2026-07-05T10:00:00.000Z',
+        nextDueDate: '2026-07-08T12:00:00.000Z',
       },
     });
   });

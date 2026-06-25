@@ -9,6 +9,8 @@ import {
   buildFollowUpCreateData,
   buildFollowUpDoneActivityData,
   buildFollowUpDoneUpdateData,
+  buildFollowUpUpdatedActivityData,
+  buildFollowUpUpdateData,
   shouldUpdateNextFollowUpAt,
 } from './follow-up.prisma-mapper.js';
 import { followUpRepository } from './follow-up.repository.js';
@@ -18,6 +20,8 @@ import type {
   CreateFollowUpParams,
   GetBusinessFollowUpsParams,
   MarkFollowUpDoneParams,
+  UpdateFollowUpInput,
+  UpdateFollowUpParams,
 } from './follow-up.schemas.js';
 
 export const followUpService = {
@@ -202,6 +206,87 @@ export const followUpService = {
           userId: followUp.assignedToId,
           followUpId: followUp.id,
           cancelledAt,
+        }),
+      );
+
+      const nextPendingFollowUp =
+        await followUpRepository.findNextPendingByBusinessId(
+          tx,
+          followUp.businessId,
+        );
+
+      await followUpRepository.updateBusiness(
+        tx,
+        followUp.businessId,
+        buildBusinessNextFollowUpRecalculationData(
+          nextPendingFollowUp?.dueDate ?? null,
+        ),
+      );
+
+      return updatedFollowUp;
+    });
+  },
+
+  updateFollowUp: async (
+    params: UpdateFollowUpParams,
+    data: UpdateFollowUpInput,
+  ) => {
+    return prisma.$transaction(async (tx) => {
+      const followUp = await followUpRepository.findById(tx, params.followUpId);
+
+      if (!followUp) {
+        throw new AppError({
+          statusCode: 404,
+          code: 'FOLLOW_UP_NOT_FOUND',
+          message: 'Follow-up not found',
+        });
+      }
+
+      if (followUp.status === 'done') {
+        throw new AppError({
+          statusCode: 409,
+          code: 'FOLLOW_UP_ALREADY_DONE',
+          message: 'Done follow-ups cannot be updated',
+        });
+      }
+
+      if (followUp.status === 'cancelled') {
+        throw new AppError({
+          statusCode: 409,
+          code: 'FOLLOW_UP_CANCELLED',
+          message: 'Cancelled follow-ups cannot be updated',
+        });
+      }
+
+      if (data.assignedToId !== undefined) {
+        const assignedUser = await followUpRepository.findUserById(
+          tx,
+          data.assignedToId,
+        );
+
+        if (!assignedUser) {
+          throw new AppError({
+            statusCode: 404,
+            code: 'ASSIGNED_USER_NOT_FOUND',
+            message: 'Assigned user not found',
+          });
+        }
+      }
+
+      const updatedFollowUp = await followUpRepository.updateFollowUp(
+        tx,
+        params.followUpId,
+        buildFollowUpUpdateData(data),
+      );
+
+      await followUpRepository.createActivity(
+        tx,
+        buildFollowUpUpdatedActivityData({
+          businessId: followUp.businessId,
+          userId: data.assignedToId ?? followUp.assignedToId,
+          followUpId: followUp.id,
+          previousDueDate: followUp.dueDate,
+          nextDueDate: updatedFollowUp.dueDate,
         }),
       );
 
