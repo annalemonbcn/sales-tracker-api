@@ -367,6 +367,88 @@ const swaggerOptions: Options = {
             'At least one field is required. assignedToId can be null to unassign the business.',
         },
 
+        ActivityDto: {
+          type: 'object',
+          properties: {
+            id: {
+              type: 'string',
+              format: 'uuid',
+              example: '770e8400-e29b-41d4-a716-446655440000',
+            },
+            type: {
+              type: 'string',
+              example: 'instagram_message_sent',
+            },
+            notes: {
+              type: 'string',
+              nullable: true,
+              example:
+                'Le he escrito por Instagram preguntando si quiere recibir el dossier.',
+            },
+            metadata: {
+              type: 'object',
+              nullable: true,
+              additionalProperties: true,
+              example: {
+                channel: 'instagram',
+              },
+            },
+            user: {
+              $ref: '#/components/schemas/UserSummaryDto',
+            },
+            createdAt: {
+              type: 'string',
+              format: 'date-time',
+              example: '2026-06-25T10:00:00.000Z',
+            },
+          },
+          required: ['id', 'type', 'notes', 'metadata', 'user', 'createdAt'],
+        },
+
+        CreateActivityRequest: {
+          type: 'object',
+          properties: {
+            type: {
+              type: 'string',
+              enum: [
+                'instagram_message_sent',
+                'email_sent',
+                'phone_call_done',
+                'visit_done',
+                'response_received',
+                'dossier_sent',
+                'meeting_scheduled',
+                'meeting_done',
+                'proposal_sent',
+                'note_added',
+              ],
+              example: 'instagram_message_sent',
+              description:
+                'Manual activity type. System activity types such as business_created, status_changed or priority_changed are not allowed here.',
+            },
+            userId: {
+              type: 'string',
+              format: 'uuid',
+              example: '550e8400-e29b-41d4-a716-446655440000',
+              description:
+                'Temporary field until auth is implemented. Later this will come from req.user.id.',
+            },
+            notes: {
+              type: 'string',
+              example:
+                'Le he escrito por Instagram preguntando si quiere recibir el dossier.',
+            },
+            metadata: {
+              type: 'object',
+              additionalProperties: true,
+              example: {
+                channel: 'instagram',
+              },
+            },
+          },
+          required: ['type', 'userId'],
+        },
+
         ErrorResponse: {
           type: 'object',
           properties: {
