@@ -7,6 +7,7 @@ import { errorHandler } from './shared/middlewares/errorHandler.js';
 import { activityRouter } from './modules/activities/activity.routes.js';
 import { followUpRouter } from './modules/follow-ups/follow-up.routes.js';
 import { businessFollowUpRouter } from './modules/follow-ups/business-follow-up.routes.js';
+import { dashboardRouter } from './modules/dashboard/dashboard.routes.js';
 
 export const app = express();
 
@@ -25,6 +26,7 @@ app.use('/businesses', businessRouter);
 app.use('/businesses/:businessId/activities', activityRouter);
 app.use('/businesses/:businessId/follow-ups', businessFollowUpRouter);
 app.use('/follow-ups', followUpRouter);
+app.use('/dashboard', dashboardRouter);
 
 app.use(notFoundHandler);
 app.use(errorHandler);
