@@ -4,6 +4,7 @@ import {
   cancelFollowUpSchema,
   createFollowUpSchema,
   getBusinessFollowUpsSchema,
+  getFollowUpsSchema,
   markFollowUpDoneSchema,
   updateFollowUpSchema,
 } from './follow-up.schemas.js';
@@ -387,5 +388,231 @@ describe('updateFollowUpSchema', () => {
         'Follow-up note is required',
       );
     }
+  });
+});
+
+describe('getFollowUpsSchema', () => {
+  it('accepts empty query params', () => {
+    const result = getFollowUpsSchema.safeParse({
+      query: {},
+    });
+
+    expect(result.success).toBe(true);
+
+    if (result.success) {
+      expect(result.data.query).toEqual({});
+    }
+  });
+
+  it('accepts a valid status filter', () => {
+    const result = getFollowUpsSchema.safeParse({
+      query: {
+        status: 'pending',
+      },
+    });
+
+    expect(result.success).toBe(true);
+
+    if (result.success) {
+      expect(result.data.query.status).toBe('pending');
+    }
+  });
+
+  it('accepts a valid assignedToId filter', () => {
+    const result = getFollowUpsSchema.safeParse({
+      query: {
+        assignedToId: '550e8400-e29b-41d4-a716-446655440000',
+      },
+    });
+
+    expect(result.success).toBe(true);
+  });
+
+  it('accepts a valid dueBefore filter and transforms it to Date', () => {
+    const result = getFollowUpsSchema.safeParse({
+      query: {
+        dueBefore: '2026-07-10T00:00:00.000Z',
+      },
+    });
+
+    expect(result.success).toBe(true);
+
+    if (result.success) {
+      expect(result.data.query.dueBefore).toBeInstanceOf(Date);
+      expect(result.data.query.dueBefore?.toISOString()).toBe(
+        '2026-07-10T00:00:00.000Z',
+      );
+    }
+  });
+
+  it('accepts a valid dueAfter filter and transforms it to Date', () => {
+    const result = getFollowUpsSchema.safeParse({
+      query: {
+        dueAfter: '2026-07-01T00:00:00.000Z',
+      },
+    });
+
+    expect(result.success).toBe(true);
+
+    if (result.success) {
+      expect(result.data.query.dueAfter).toBeInstanceOf(Date);
+      expect(result.data.query.dueAfter?.toISOString()).toBe(
+        '2026-07-01T00:00:00.000Z',
+      );
+    }
+  });
+
+  it('accepts several filters at once', () => {
+    const result = getFollowUpsSchema.safeParse({
+      query: {
+        status: 'pending',
+        assignedToId: '550e8400-e29b-41d4-a716-446655440000',
+        businessId: '660e8400-e29b-41d4-a716-446655440000',
+        priority: 'high',
+        dueAfter: '2026-07-01T00:00:00.000Z',
+        dueBefore: '2026-07-10T00:00:00.000Z',
+      },
+    });
+
+    expect(result.success).toBe(true);
+
+    if (result.success) {
+      expect(result.data.query).toEqual({
+        status: 'pending',
+        assignedToId: '550e8400-e29b-41d4-a716-446655440000',
+        businessId: '660e8400-e29b-41d4-a716-446655440000',
+        priority: 'high',
+        dueAfter: new Date('2026-07-01T00:00:00.000Z'),
+        dueBefore: new Date('2026-07-10T00:00:00.000Z'),
+      });
+    }
+  });
+
+  it('accepts several filters at once', () => {
+    const result = getFollowUpsSchema.safeParse({
+      query: {
+        status: 'pending',
+        assignedToId: '550e8400-e29b-41d4-a716-446655440000',
+        dueAfter: '2026-07-01T00:00:00.000Z',
+        dueBefore: '2026-07-10T00:00:00.000Z',
+      },
+    });
+
+    expect(result.success).toBe(true);
+
+    if (result.success) {
+      expect(result.data.query).toEqual({
+        status: 'pending',
+        assignedToId: '550e8400-e29b-41d4-a716-446655440000',
+        dueAfter: new Date('2026-07-01T00:00:00.000Z'),
+        dueBefore: new Date('2026-07-10T00:00:00.000Z'),
+      });
+    }
+  });
+
+  it('rejects an invalid status filter', () => {
+    const result = getFollowUpsSchema.safeParse({
+      query: {
+        status: 'invalid-status',
+      },
+    });
+
+    expect(result.success).toBe(false);
+  });
+
+  it('rejects an invalid assignedToId filter', () => {
+    const result = getFollowUpsSchema.safeParse({
+      query: {
+        assignedToId: 'not-a-uuid',
+      },
+    });
+
+    expect(result.success).toBe(false);
+
+    if (!result.success) {
+      expect(result.error.issues[0]?.message).toBe('Invalid assignedToId');
+    }
+  });
+
+  it('rejects an invalid dueBefore filter', () => {
+    const result = getFollowUpsSchema.safeParse({
+      query: {
+        dueBefore: 'not-a-date',
+      },
+    });
+
+    expect(result.success).toBe(false);
+
+    if (!result.success) {
+      expect(result.error.issues[0]?.message).toBe('Invalid dueBefore');
+    }
+  });
+
+  it('rejects an invalid dueAfter filter', () => {
+    const result = getFollowUpsSchema.safeParse({
+      query: {
+        dueAfter: 'not-a-date',
+      },
+    });
+
+    expect(result.success).toBe(false);
+
+    if (!result.success) {
+      expect(result.error.issues[0]?.message).toBe('Invalid dueAfter');
+    }
+  });
+
+  it('accepts a valid businessId filter', () => {
+    const result = getFollowUpsSchema.safeParse({
+      query: {
+        businessId: '550e8400-e29b-41d4-a716-446655440000',
+      },
+    });
+
+    expect(result.success).toBe(true);
+
+    if (result.success) {
+      expect(result.data.query.businessId).toBe(
+        '550e8400-e29b-41d4-a716-446655440000',
+      );
+    }
+  });
+
+  it('rejects an invalid businessId filter', () => {
+    const result = getFollowUpsSchema.safeParse({
+      query: {
+        businessId: 'not-a-uuid',
+      },
+    });
+
+    expect(result.success).toBe(false);
+
+    if (!result.success) {
+      expect(result.error.issues[0]?.message).toBe('Invalid businessId');
+    }
+  });
+
+  it('accepts a valid priority filter', () => {
+    const result = getFollowUpsSchema.safeParse({
+      query: {
+        priority: 'high',
+      },
+    });
+
+    expect(result.success).toBe(true);
+
+    if (result.success) {
+      expect(result.data.query.priority).toBe('high');
+    }
+  });
+
+  it('rejects an invalid priority filter', () => {
+    const result = getFollowUpsSchema.safeParse({
+      query: {
+        priority: 'urgent',
+      },
+    });
+
+    expect(result.success).toBe(false);
   });
 });

@@ -1,6 +1,10 @@
 import { describe, expect, it } from 'vitest';
 
-import { ActivityType, FollowUpStatus } from '../../generated/prisma/enums.js';
+import {
+  ActivityType,
+  FollowUpStatus,
+  Priority,
+} from '../../generated/prisma/enums.js';
 import {
   buildBusinessNextFollowUpRecalculationData,
   buildBusinessNextFollowUpUpdateData,
@@ -12,6 +16,7 @@ import {
   buildFollowUpDoneUpdateData,
   buildFollowUpUpdateData,
   buildFollowUpUpdatedActivityData,
+  buildFollowUpWhere,
   shouldUpdateNextFollowUpAt,
 } from './follow-up.prisma-mapper.js';
 
@@ -317,6 +322,128 @@ describe('buildFollowUpUpdatedActivityData', () => {
         followUpId: 'follow-up-id',
         previousDueDate: '2026-07-05T10:00:00.000Z',
         nextDueDate: '2026-07-08T12:00:00.000Z',
+      },
+    });
+  });
+});
+
+describe('buildFollowUpWhere', () => {
+  it('builds an empty where when no filters are provided', () => {
+    const result = buildFollowUpWhere({});
+
+    expect(result).toEqual({});
+  });
+
+  it('builds where with status filter', () => {
+    const result = buildFollowUpWhere({
+      status: FollowUpStatus.pending,
+    });
+
+    expect(result).toEqual({
+      status: FollowUpStatus.pending,
+    });
+  });
+
+  it('builds where with assignedToId filter', () => {
+    const result = buildFollowUpWhere({
+      assignedToId: '550e8400-e29b-41d4-a716-446655440000',
+    });
+
+    expect(result).toEqual({
+      assignedToId: '550e8400-e29b-41d4-a716-446655440000',
+    });
+  });
+
+  it('builds where with dueBefore filter', () => {
+    const dueBefore = new Date('2026-07-10T00:00:00.000Z');
+
+    const result = buildFollowUpWhere({
+      dueBefore,
+    });
+
+    expect(result).toEqual({
+      dueDate: {
+        lte: dueBefore,
+      },
+    });
+  });
+
+  it('builds where with dueAfter filter', () => {
+    const dueAfter = new Date('2026-07-01T00:00:00.000Z');
+
+    const result = buildFollowUpWhere({
+      dueAfter,
+    });
+
+    expect(result).toEqual({
+      dueDate: {
+        gte: dueAfter,
+      },
+    });
+  });
+
+  it('builds where with dueAfter and dueBefore filters', () => {
+    const dueAfter = new Date('2026-07-01T00:00:00.000Z');
+    const dueBefore = new Date('2026-07-10T00:00:00.000Z');
+
+    const result = buildFollowUpWhere({
+      dueAfter,
+      dueBefore,
+    });
+
+    expect(result).toEqual({
+      dueDate: {
+        gte: dueAfter,
+        lte: dueBefore,
+      },
+    });
+  });
+
+  it('builds where with all filters', () => {
+    const dueAfter = new Date('2026-07-01T00:00:00.000Z');
+    const dueBefore = new Date('2026-07-10T00:00:00.000Z');
+
+    const result = buildFollowUpWhere({
+      status: FollowUpStatus.pending,
+      assignedToId: '550e8400-e29b-41d4-a716-446655440000',
+      businessId: '660e8400-e29b-41d4-a716-446655440000',
+      priority: Priority.high,
+      dueAfter,
+      dueBefore,
+    });
+
+    expect(result).toEqual({
+      status: FollowUpStatus.pending,
+      assignedToId: '550e8400-e29b-41d4-a716-446655440000',
+      businessId: '660e8400-e29b-41d4-a716-446655440000',
+      business: {
+        priority: Priority.high,
+      },
+      dueDate: {
+        gte: dueAfter,
+        lte: dueBefore,
+      },
+    });
+  });
+
+  it('builds where with businessId filter', () => {
+    const result = buildFollowUpWhere({
+      businessId: '550e8400-e29b-41d4-a716-446655440000',
+    });
+
+    expect(result).toEqual({
+      businessId: '550e8400-e29b-41d4-a716-446655440000',
+    });
+  });
+
+  it('builds where with business priority filter', () => {
+    const result = buildFollowUpWhere({
+      priority: Priority.high,
+    });
+
+    expect(result).toEqual({
+      business: {
+        priority: Priority.high,
       },
     });
   });

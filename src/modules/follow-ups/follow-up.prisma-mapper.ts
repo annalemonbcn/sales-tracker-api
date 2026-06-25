@@ -3,6 +3,7 @@ import { ActivityType, FollowUpStatus } from '../../generated/prisma/enums.js';
 import type {
   CreateFollowUpInput,
   CreateFollowUpParams,
+  GetFollowUpsQuery,
   UpdateFollowUpInput,
 } from './follow-up.schemas.js';
 
@@ -160,5 +161,42 @@ export const buildFollowUpUpdatedActivityData = (params: {
       previousDueDate: params.previousDueDate.toISOString(),
       nextDueDate: params.nextDueDate.toISOString(),
     },
+  };
+};
+
+export const buildFollowUpWhere = (
+  query: GetFollowUpsQuery,
+): Prisma.FollowUpWhereInput => {
+  return {
+    ...(query.status ? { status: query.status } : {}),
+
+    ...(query.assignedToId
+      ? {
+          assignedToId: query.assignedToId,
+        }
+      : {}),
+
+    ...(query.businessId
+      ? {
+          businessId: query.businessId,
+        }
+      : {}),
+
+    ...(query.priority
+      ? {
+          business: {
+            priority: query.priority,
+          },
+        }
+      : {}),
+
+    ...(query.dueBefore || query.dueAfter
+      ? {
+          dueDate: {
+            ...(query.dueAfter ? { gte: query.dueAfter } : {}),
+            ...(query.dueBefore ? { lte: query.dueBefore } : {}),
+          },
+        }
+      : {}),
   };
 };

@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { FollowUpStatus, Priority } from '../../generated/prisma/enums.js';
 
 export const getBusinessFollowUpsSchema = z.object({
   params: z.object({
@@ -78,3 +79,27 @@ export type UpdateFollowUpParams = z.infer<
 >['params'];
 
 export type UpdateFollowUpInput = z.infer<typeof updateFollowUpSchema>['body'];
+
+export const getFollowUpsSchema = z.object({
+  query: z.object({
+    status: z.enum(FollowUpStatus).optional(),
+
+    assignedToId: z.uuid('Invalid assignedToId').optional(),
+
+    businessId: z.uuid('Invalid businessId').optional(),
+
+    priority: z.enum(Priority).optional(),
+
+    dueBefore: z.iso
+      .datetime('Invalid dueBefore')
+      .transform((value) => new Date(value))
+      .optional(),
+
+    dueAfter: z.iso
+      .datetime('Invalid dueAfter')
+      .transform((value) => new Date(value))
+      .optional(),
+  }),
+});
+
+export type GetFollowUpsQuery = z.infer<typeof getFollowUpsSchema>['query'];

@@ -11,6 +11,7 @@ import {
   buildFollowUpDoneUpdateData,
   buildFollowUpUpdatedActivityData,
   buildFollowUpUpdateData,
+  buildFollowUpWhere,
   shouldUpdateNextFollowUpAt,
 } from './follow-up.prisma-mapper.js';
 import { followUpRepository } from './follow-up.repository.js';
@@ -19,6 +20,7 @@ import type {
   CreateFollowUpInput,
   CreateFollowUpParams,
   GetBusinessFollowUpsParams,
+  GetFollowUpsQuery,
   MarkFollowUpDoneParams,
   UpdateFollowUpInput,
   UpdateFollowUpParams,
@@ -41,6 +43,14 @@ export const followUpService = {
       }
 
       return followUpRepository.findManyByBusinessId(tx, params.businessId);
+    });
+  },
+
+  getFollowUps: async (query: GetFollowUpsQuery) => {
+    return prisma.$transaction(async (tx) => {
+      const where = buildFollowUpWhere(query);
+
+      return followUpRepository.findMany(tx, where);
     });
   },
 

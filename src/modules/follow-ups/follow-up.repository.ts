@@ -90,6 +90,34 @@ export const followUpRepository = {
     });
   },
 
+  findMany: (tx: TransactionClient, where: Prisma.FollowUpWhereInput) => {
+    return tx.followUp.findMany({
+      where,
+      orderBy: [
+        {
+          dueDate: 'asc',
+        },
+        {
+          createdAt: 'desc',
+        },
+      ],
+      include: {
+        assignedTo: {
+          select: followUpUserSelect,
+        },
+        business: {
+          select: {
+            id: true,
+            name: true,
+            category: true,
+            status: true,
+            priority: true,
+          },
+        },
+      },
+    });
+  },
+
   findById: (tx: TransactionClient, followUpId: string) => {
     return tx.followUp.findUnique({
       where: {
