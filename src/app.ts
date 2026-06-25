@@ -1,5 +1,7 @@
 import express from 'express';
 import cors from 'cors';
+import swaggerUi from 'swagger-ui-express';
+import { swaggerSpec } from './docs/swagger.js';
 import { userRouter } from './modules/users/user.routes.js';
 import { businessRouter } from './modules/businesses/business.routes.js';
 import { notFoundHandler } from './shared/middlewares/notFoundHandler.js';
@@ -20,6 +22,8 @@ app.get('/health', (_req, res) => {
     message: 'Sales Tracker API is running',
   });
 });
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.use('/users', userRouter);
 app.use('/businesses', businessRouter);
