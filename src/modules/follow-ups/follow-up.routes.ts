@@ -3,30 +3,16 @@ import { Router } from 'express';
 import { validateRequest } from '../../shared/middlewares/validateRequest.js';
 import {
   cancelFollowUp,
-  createFollowUp,
-  getBusinessFollowUps,
   markFollowUpDone,
   updateFollowUp,
 } from './follow-up.controller.js';
 import {
   cancelFollowUpSchema,
-  createFollowUpSchema,
-  getBusinessFollowUpsSchema,
   markFollowUpDoneSchema,
   updateFollowUpSchema,
 } from './follow-up.schemas.js';
 
-export const followUpRouter = Router({
-  mergeParams: true,
-});
-
-followUpRouter.get(
-  '/',
-  validateRequest(getBusinessFollowUpsSchema),
-  getBusinessFollowUps,
-);
-
-followUpRouter.post('/', validateRequest(createFollowUpSchema), createFollowUp);
+export const followUpRouter = Router();
 
 followUpRouter.patch(
   '/:followUpId',
