@@ -449,6 +449,194 @@ const swaggerOptions: Options = {
           required: ['type', 'userId'],
         },
 
+        FollowUpDto: {
+          type: 'object',
+          properties: {
+            id: {
+              type: 'string',
+              format: 'uuid',
+              example: '770e8400-e29b-41d4-a716-446655440000',
+            },
+            status: {
+              type: 'string',
+              enum: ['pending', 'done', 'cancelled'],
+              example: 'pending',
+            },
+            dueDate: {
+              type: 'string',
+              format: 'date-time',
+              example: '2026-07-05T10:00:00.000Z',
+            },
+            note: {
+              type: 'string',
+              nullable: true,
+              example:
+                'Call the business to check if they received the dossier.',
+            },
+            completedAt: {
+              type: 'string',
+              format: 'date-time',
+              nullable: true,
+              example: null,
+            },
+            assignedTo: {
+              $ref: '#/components/schemas/UserSummaryDto',
+            },
+            createdAt: {
+              type: 'string',
+              format: 'date-time',
+              example: '2026-06-25T10:00:00.000Z',
+            },
+            updatedAt: {
+              type: 'string',
+              format: 'date-time',
+              example: '2026-06-25T10:30:00.000Z',
+            },
+          },
+          required: [
+            'id',
+            'status',
+            'dueDate',
+            'note',
+            'completedAt',
+            'assignedTo',
+            'createdAt',
+            'updatedAt',
+          ],
+        },
+
+        FollowUpBusinessDto: {
+          type: 'object',
+          properties: {
+            id: {
+              type: 'string',
+              format: 'uuid',
+              example: '660e8400-e29b-41d4-a716-446655440000',
+            },
+            name: {
+              type: 'string',
+              example: 'Bella Hair Studio',
+            },
+            category: {
+              type: 'string',
+              example: 'hairdresser',
+            },
+            status: {
+              type: 'string',
+              example: 'waiting_response',
+            },
+            priority: {
+              type: 'string',
+              example: 'high',
+            },
+          },
+          required: ['id', 'name', 'category', 'status', 'priority'],
+        },
+
+        FollowUpTaskDto: {
+          type: 'object',
+          properties: {
+            id: {
+              type: 'string',
+              format: 'uuid',
+              example: '770e8400-e29b-41d4-a716-446655440000',
+            },
+            status: {
+              type: 'string',
+              enum: ['pending', 'done', 'cancelled'],
+              example: 'pending',
+            },
+            dueDate: {
+              type: 'string',
+              format: 'date-time',
+              example: '2026-07-05T10:00:00.000Z',
+            },
+            note: {
+              type: 'string',
+              nullable: true,
+              example:
+                'Call the business to check if they received the dossier.',
+            },
+            completedAt: {
+              type: 'string',
+              format: 'date-time',
+              nullable: true,
+              example: null,
+            },
+            assignedTo: {
+              $ref: '#/components/schemas/UserSummaryDto',
+            },
+            business: {
+              $ref: '#/components/schemas/FollowUpBusinessDto',
+            },
+            createdAt: {
+              type: 'string',
+              format: 'date-time',
+              example: '2026-06-25T10:00:00.000Z',
+            },
+            updatedAt: {
+              type: 'string',
+              format: 'date-time',
+              example: '2026-06-25T10:30:00.000Z',
+            },
+          },
+          required: [
+            'id',
+            'status',
+            'dueDate',
+            'note',
+            'completedAt',
+            'assignedTo',
+            'business',
+            'createdAt',
+            'updatedAt',
+          ],
+        },
+
+        CreateFollowUpRequest: {
+          type: 'object',
+          properties: {
+            assignedToId: {
+              type: 'string',
+              format: 'uuid',
+              example: '550e8400-e29b-41d4-a716-446655440000',
+            },
+            dueDate: {
+              type: 'string',
+              format: 'date-time',
+              example: '2026-07-05T10:00:00.000Z',
+            },
+            note: {
+              type: 'string',
+              example:
+                'Call the business to check if they received the dossier.',
+            },
+          },
+          required: ['assignedToId', 'dueDate'],
+        },
+
+        UpdateFollowUpRequest: {
+          type: 'object',
+          properties: {
+            assignedToId: {
+              type: 'string',
+              format: 'uuid',
+              example: '550e8400-e29b-41d4-a716-446655440000',
+            },
+            dueDate: {
+              type: 'string',
+              format: 'date-time',
+              example: '2026-07-08T12:00:00.000Z',
+            },
+            note: {
+              type: 'string',
+              example: 'Visit the business in person.',
+            },
+          },
+          description:
+            'At least one field is required. Only assignedToId, dueDate and note can be updated from this endpoint.',
+        },
+
         ErrorResponse: {
           type: 'object',
           properties: {
