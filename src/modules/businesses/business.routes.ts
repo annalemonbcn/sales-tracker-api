@@ -19,6 +19,7 @@ export const businessRouter = Router();
  * @openapi
  * /businesses:
  *   get:
+ *     operationId: getBusinesses
  *     summary: Get businesses
  *     description: Returns businesses with optional filters.
  *     tags:

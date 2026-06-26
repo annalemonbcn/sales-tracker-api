@@ -39,6 +39,12 @@ const swaggerOptions: Options = {
     ],
     components: {
       schemas: {
+        DashboardMetricTrendVariant: {
+          type: 'string',
+          enum: ['success', 'warning', 'danger', 'neutral'],
+          example: 'success',
+        },
+
         DashboardMetric: {
           type: 'object',
           properties: {
@@ -51,9 +57,7 @@ const swaggerOptions: Options = {
               example: 12,
             },
             trendVariant: {
-              type: 'string',
-              enum: ['success', 'warning', 'danger', 'neutral'],
-              example: 'success',
+              $ref: '#/components/schemas/DashboardMetricTrendVariant',
             },
           },
           required: ['value', 'currentMonth', 'trendVariant'],
@@ -165,6 +169,61 @@ const swaggerOptions: Options = {
           required: ['instagram', 'email', 'phone', 'website', 'address'],
         },
 
+        BusinessStatus: {
+          type: 'string',
+          enum: [
+            'new_lead',
+            'assigned',
+            'waiting_response',
+            'interested',
+            'dossier_sent',
+            'meeting_scheduled',
+            'meeting_done',
+            'proposal_sent',
+            'negotiating',
+            'won',
+            'lost',
+            'recontact_later',
+            'discarded',
+          ],
+          example: 'waiting_response',
+        },
+
+        Category: {
+          type: 'string',
+          enum: [
+            'restaurant',
+            'hairdresser',
+            'beauty_center',
+            'hotel',
+            'shop',
+            'gym',
+            'clinic',
+            'other',
+          ],
+          example: 'hairdresser',
+        },
+
+        Priority: {
+          type: 'string',
+          enum: ['low', 'medium', 'high'],
+          example: 'high',
+        },
+
+        LeadSource: {
+          type: 'string',
+          enum: [
+            'instagram',
+            'google_maps',
+            'walk_in',
+            'referral',
+            'website',
+            'existing_contact',
+            'other',
+          ],
+          example: 'instagram',
+        },
+
         BusinessDto: {
           type: 'object',
           properties: {
@@ -178,20 +237,16 @@ const swaggerOptions: Options = {
               example: 'Bella Hair Studio',
             },
             category: {
-              type: 'string',
-              example: 'hairdresser',
+              $ref: '#/components/schemas/Category',
             },
             status: {
-              type: 'string',
-              example: 'waiting_response',
+              $ref: '#/components/schemas/BusinessStatus',
             },
             priority: {
-              type: 'string',
-              example: 'high',
+              $ref: '#/components/schemas/Priority',
             },
             source: {
-              type: 'string',
-              example: 'instagram',
+              $ref: '#/components/schemas/LeadSource',
             },
             details: {
               $ref: '#/components/schemas/BusinessDetailsDto',
