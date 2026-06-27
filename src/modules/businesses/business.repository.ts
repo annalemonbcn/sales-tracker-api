@@ -34,6 +34,32 @@ export const businessRepository = {
     });
   },
 
+  findBusinessActivitiesById: (tx: TransactionClient, businessId: string) => {
+    return tx.business.findUnique({
+      where: {
+        id: businessId,
+      },
+      include: {
+        createdBy: {
+          select: businessUserSelect,
+        },
+        assignedTo: {
+          select: businessUserSelect,
+        },
+        activities: {
+          include: {
+            user: {
+              select: businessUserSelect,
+            },
+          },
+          orderBy: {
+            createdAt: 'desc',
+          },
+        },
+      },
+    });
+  },
+
   findManyBusinesses: (
     tx: TransactionClient,
     where: Prisma.BusinessWhereInput,

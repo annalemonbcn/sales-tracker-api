@@ -21,7 +21,7 @@ import { businessRepository } from './business.repository.js';
 export const businessService = {
   getBusinessById: async (params: GetBusinessByIdParams) => {
     return prisma.$transaction(async (tx) => {
-      const business = await businessRepository.findBusinessById(
+      const business = await businessRepository.findBusinessActivitiesById(
         tx,
         params.businessId,
       );

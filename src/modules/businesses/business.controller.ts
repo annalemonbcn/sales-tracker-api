@@ -8,7 +8,7 @@ import type {
   UpdateBusinessParams,
 } from './business.schemas.js';
 import { businessService } from './business.service.js';
-import { toBusinessDto } from './business.mapper.js';
+import { toBusinessDetailDto, toBusinessDto } from './business.mapper.js';
 
 export const getBusiness: RequestHandler = async (_req, res, next) => {
   try {
@@ -17,7 +17,7 @@ export const getBusiness: RequestHandler = async (_req, res, next) => {
     const business = await businessService.getBusinessById(params);
 
     return sendSuccess(res, {
-      business: toBusinessDto(business),
+      business: toBusinessDetailDto(business),
     });
   } catch (error) {
     next(error);

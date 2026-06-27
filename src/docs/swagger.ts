@@ -81,11 +81,16 @@ const swaggerOptions: Options = {
               example: 'anna@example.com',
             },
             role: {
-              type: 'string',
-              example: 'admin',
+              $ref: '#/components/schemas/UserRole',
             },
           },
           required: ['id', 'name', 'email', 'role'],
+        },
+
+        UserRole: {
+          type: 'string',
+          enum: ['admin', 'commercial'],
+          example: 'admin',
         },
 
         UserDto: {
@@ -106,8 +111,7 @@ const swaggerOptions: Options = {
               example: 'anna@example.com',
             },
             role: {
-              type: 'string',
-              example: 'admin',
+              $ref: '#/components/schemas/UserRole',
             },
             active: {
               type: 'boolean',
@@ -135,7 +139,7 @@ const swaggerOptions: Options = {
           ],
         },
 
-        BusinessDetailsDto: {
+        BusinessContactDetailsDto: {
           type: 'object',
           properties: {
             instagram: {
@@ -249,7 +253,7 @@ const swaggerOptions: Options = {
               $ref: '#/components/schemas/LeadSource',
             },
             details: {
-              $ref: '#/components/schemas/BusinessDetailsDto',
+              $ref: '#/components/schemas/BusinessContactDetailsDto',
             },
             notes: {
               type: 'string',
@@ -305,6 +309,26 @@ const swaggerOptions: Options = {
             'assignedTo',
             'createdAt',
             'updatedAt',
+          ],
+        },
+
+        BusinessDetailDto: {
+          allOf: [
+            {
+              $ref: '#/components/schemas/BusinessDto',
+            },
+            {
+              type: 'object',
+              properties: {
+                activities: {
+                  type: 'array',
+                  items: {
+                    $ref: '#/components/schemas/ActivityDto',
+                  },
+                },
+              },
+              required: ['activities'],
+            },
           ],
         },
 
