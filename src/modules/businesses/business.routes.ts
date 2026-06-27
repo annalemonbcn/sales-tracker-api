@@ -122,7 +122,9 @@ businessRouter.get('/', validateRequest(getBusinessesSchema), getBusinesses);
  *                   type: object
  *                   properties:
  *                     business:
- *                       $ref: '#/components/schemas/BusinessDto'
+ *                       $ref: '#/components/schemas/BusinessDetailDto'
+ *                   required:
+ *                     - business
  *               required:
  *                 - success
  *                 - data
