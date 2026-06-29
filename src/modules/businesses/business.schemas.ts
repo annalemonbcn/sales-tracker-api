@@ -6,7 +6,7 @@ import {
   Priority,
 } from '../../generated/prisma/enums.js';
 
-const optionalTextField = z.preprocess((value) => {
+const optionalCreateTextField = z.preprocess((value) => {
   if (typeof value !== 'string') {
     return value;
   }
@@ -16,23 +16,71 @@ const optionalTextField = z.preprocess((value) => {
   return trimmedValue === '' ? undefined : trimmedValue;
 }, z.string().optional());
 
+const optionalUpdateTextField = z.preprocess((value) => {
+  if (typeof value !== 'string') {
+    return value;
+  }
+
+  const trimmedValue = value.trim();
+
+  return trimmedValue === '' ? null : trimmedValue;
+}, z.string().nullable().optional());
+
+const optionalCreateEmailField = z.preprocess((value) => {
+  if (typeof value !== 'string') {
+    return value;
+  }
+
+  const trimmedValue = value.trim();
+
+  return trimmedValue === '' ? undefined : trimmedValue;
+}, z.email('Invalid email').optional());
+
+const optionalUpdateEmailField = z.preprocess((value) => {
+  if (typeof value !== 'string') {
+    return value;
+  }
+
+  const trimmedValue = value.trim();
+
+  return trimmedValue === '' ? null : trimmedValue;
+}, z.email('Invalid email').nullable().optional());
+
+const optionalCreateUrlField = z.preprocess((value) => {
+  if (typeof value !== 'string') {
+    return value;
+  }
+
+  const trimmedValue = value.trim();
+
+  return trimmedValue === '' ? undefined : trimmedValue;
+}, z.url('Invalid website URL').optional());
+
+const optionalUpdateUrlField = z.preprocess((value) => {
+  if (typeof value !== 'string') {
+    return value;
+  }
+
+  const trimmedValue = value.trim();
+
+  return trimmedValue === '' ? null : trimmedValue;
+}, z.url('Invalid website URL').nullable().optional());
+
 export const createBusinessSchema = z.object({
   body: z.object({
     name: z.string().trim().min(1, 'Business name is required'),
 
     category: z.enum(Category),
-
     source: z.enum(LeadSource),
-
     priority: z.enum(Priority).default('medium'),
 
-    instagram: optionalTextField,
-    phone: optionalTextField,
-    address: optionalTextField,
-    notes: optionalTextField,
+    instagram: optionalCreateTextField,
+    phone: optionalCreateTextField,
+    address: optionalCreateTextField,
+    notes: optionalCreateTextField,
 
-    email: z.email('Invalid email').optional(),
-    website: z.url('Invalid website URL').optional(),
+    email: optionalCreateEmailField,
+    website: optionalCreateUrlField,
 
     createdById: z.uuid('Invalid createdById'),
     assignedToId: z.uuid('Invalid assignedToId').optional(),
@@ -79,20 +127,17 @@ export const updateBusinessSchema = z.object({
       name: z.string().trim().min(1, 'Business name is required').optional(),
 
       category: z.enum(Category).optional(),
-
       status: z.enum(BusinessStatus).optional(),
-
       source: z.enum(LeadSource).optional(),
-
       priority: z.enum(Priority).optional(),
 
-      instagram: optionalTextField,
-      phone: optionalTextField,
-      address: optionalTextField,
-      notes: optionalTextField,
+      instagram: optionalUpdateTextField,
+      phone: optionalUpdateTextField,
+      address: optionalUpdateTextField,
+      notes: optionalUpdateTextField,
 
-      email: z.email('Invalid email').optional(),
-      website: z.url('Invalid website URL').optional(),
+      email: optionalUpdateEmailField,
+      website: optionalUpdateUrlField,
 
       assignedToId: z.uuid('Invalid assignedToId').nullable().optional(),
     })

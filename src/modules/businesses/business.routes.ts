@@ -232,7 +232,7 @@ businessRouter.post('/', validateRequest(createBusinessSchema), createBusiness);
  *                   type: object
  *                   properties:
  *                     business:
- *                       $ref: '#/components/schemas/BusinessDto'
+ *                       $ref: '#/components/schemas/BusinessDetailDto'
  *               required:
  *                 - success
  *                 - data
