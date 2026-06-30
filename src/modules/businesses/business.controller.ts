@@ -62,7 +62,7 @@ export const updateBusiness: RequestHandler = async (req, res, next) => {
     const business = await businessService.updateBusiness(params, data);
 
     return sendSuccess(res, {
-      business: toBusinessDto(business),
+      business: toBusinessDetailDto(business),
     });
   } catch (error) {
     next(error);

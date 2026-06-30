@@ -52,9 +52,12 @@ export const businessRouter = Router();
  *       - in: query
  *         name: assignedToId
  *         schema:
- *           type: string
- *           format: uuid
- *         description: Filter by assigned user.
+ *           oneOf:
+ *             - type: string
+ *               format: uuid
+ *             - type: string
+ *               enum: [unassigned]
+ *         description: Filter by assigned user id or use "unassigned" to return businesses without assigned user.
  *       - in: query
  *         name: search
  *         schema:
@@ -232,7 +235,7 @@ businessRouter.post('/', validateRequest(createBusinessSchema), createBusiness);
  *                   type: object
  *                   properties:
  *                     business:
- *                       $ref: '#/components/schemas/BusinessDto'
+ *                       $ref: '#/components/schemas/BusinessDetailDto'
  *               required:
  *                 - success
  *                 - data

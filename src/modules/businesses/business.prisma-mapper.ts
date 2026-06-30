@@ -57,14 +57,16 @@ export const buildBusinessAssignedActivityData = (params: {
   businessId: string;
   userId: string;
   assignedToId: string;
+  assignedToName: string;
 }): Prisma.ActivityUncheckedCreateInput => {
   return {
     businessId: params.businessId,
     userId: params.userId,
     type: 'business_assigned',
-    notes: `Business assigned to user ${params.assignedToId}`,
+    notes: `Business assigned to ${params.assignedToName}`,
     metadata: {
       assignedToId: params.assignedToId,
+      assignedToName: params.assignedToName,
     },
   };
 };
@@ -105,6 +107,24 @@ export const buildPriorityChangedActivityData = (params: {
   };
 };
 
+const buildAssignedToWhere = (
+  assignedToId: GetBusinessesQuery['assignedToId'],
+): Prisma.BusinessWhereInput => {
+  if (!assignedToId) {
+    return {};
+  }
+
+  if (assignedToId === 'unassigned') {
+    return {
+      assignedToId: null,
+    };
+  }
+
+  return {
+    assignedToId,
+  };
+};
+
 export const buildBusinessWhere = (
   query: GetBusinessesQuery,
 ): Prisma.BusinessWhereInput => {
@@ -113,7 +133,8 @@ export const buildBusinessWhere = (
     ...(query.category ? { category: query.category } : {}),
     ...(query.priority ? { priority: query.priority } : {}),
     ...(query.source ? { source: query.source } : {}),
-    ...(query.assignedToId ? { assignedToId: query.assignedToId } : {}),
+
+    ...buildAssignedToWhere(query.assignedToId),
 
     ...(query.search
       ? {

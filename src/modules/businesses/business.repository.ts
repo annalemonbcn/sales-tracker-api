@@ -111,6 +111,16 @@ export const businessRepository = {
         assignedTo: {
           select: businessUserSelect,
         },
+        activities: {
+          include: {
+            user: {
+              select: businessUserSelect,
+            },
+          },
+          orderBy: {
+            createdAt: 'desc',
+          },
+        },
       },
     });
   },
