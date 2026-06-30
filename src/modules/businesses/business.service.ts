@@ -61,19 +61,16 @@ export const businessService = {
         });
       }
 
-      if (data.assignedToId) {
-        const assignedUser = await businessRepository.findUserById(
-          tx,
-          data.assignedToId,
-        );
+      const assignedUser = data.assignedToId
+        ? await businessRepository.findUserById(tx, data.assignedToId)
+        : null;
 
-        if (!assignedUser) {
-          throw new AppError({
-            statusCode: 404,
-            code: 'ASSIGNED_USER_NOT_FOUND',
-            message: 'The assigned user does not exist',
-          });
-        }
+      if (data.assignedToId && !assignedUser) {
+        throw new AppError({
+          statusCode: 404,
+          code: 'ASSIGNED_USER_NOT_FOUND',
+          message: 'The assigned user does not exist',
+        });
       }
 
       const initialStatus = data.assignedToId ? 'assigned' : 'new_lead';
@@ -91,13 +88,14 @@ export const businessService = {
         }),
       );
 
-      if (data.assignedToId) {
+      if (assignedUser) {
         await businessRepository.createActivity(
           tx,
           buildBusinessAssignedActivityData({
             businessId: business.id,
             userId: data.createdById,
-            assignedToId: data.assignedToId,
+            assignedToId: assignedUser.id,
+            assignedToName: assignedUser.name,
           }),
         );
       }
@@ -124,19 +122,16 @@ export const businessService = {
         });
       }
 
-      if (data.assignedToId) {
-        const assignedUser = await businessRepository.findUserById(
-          tx,
-          data.assignedToId,
-        );
+      const assignedUser = data.assignedToId
+        ? await businessRepository.findUserById(tx, data.assignedToId)
+        : null;
 
-        if (!assignedUser) {
-          throw new AppError({
-            statusCode: 404,
-            code: 'ASSIGNED_USER_NOT_FOUND',
-            message: 'The assigned user does not exist',
-          });
-        }
+      if (data.assignedToId && !assignedUser) {
+        throw new AppError({
+          statusCode: 404,
+          code: 'ASSIGNED_USER_NOT_FOUND',
+          message: 'The assigned user does not exist',
+        });
       }
 
       const updatedBusiness = await businessRepository.updateBusiness(
@@ -175,17 +170,14 @@ export const businessService = {
         );
       }
 
-      if (
-        data.assignedToId !== undefined &&
-        data.assignedToId !== null &&
-        data.assignedToId !== existingBusiness.assignedToId
-      ) {
+      if (assignedUser && assignedUser.id !== existingBusiness.assignedToId) {
         await businessRepository.createActivity(
           tx,
           buildBusinessAssignedActivityData({
             businessId: existingBusiness.id,
             userId: existingBusiness.createdById,
-            assignedToId: data.assignedToId,
+            assignedToId: assignedUser.id,
+            assignedToName: assignedUser.name,
           }),
         );
       }

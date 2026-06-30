@@ -57,14 +57,16 @@ export const buildBusinessAssignedActivityData = (params: {
   businessId: string;
   userId: string;
   assignedToId: string;
+  assignedToName: string;
 }): Prisma.ActivityUncheckedCreateInput => {
   return {
     businessId: params.businessId,
     userId: params.userId,
     type: 'business_assigned',
-    notes: `Business assigned to user ${params.assignedToId}`,
+    notes: `Business assigned to ${params.assignedToName}`,
     metadata: {
       assignedToId: params.assignedToId,
+      assignedToName: params.assignedToName,
     },
   };
 };
