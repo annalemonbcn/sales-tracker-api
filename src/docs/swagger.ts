@@ -451,6 +451,31 @@ const swaggerOptions: Options = {
             'At least one field is required. assignedToId can be null to unassign the business.',
         },
 
+        ActivityType: {
+          type: 'string',
+          enum: [
+            'business_created',
+            'business_assigned',
+            'instagram_message_sent',
+            'email_sent',
+            'phone_call_done',
+            'visit_done',
+            'response_received',
+            'dossier_sent',
+            'meeting_scheduled',
+            'meeting_done',
+            'proposal_sent',
+            'follow_up_created',
+            'follow_up_done',
+            'follow_up_cancelled',
+            'follow_up_updated',
+            'status_changed',
+            'priority_changed',
+            'note_added',
+          ],
+          example: 'instagram_message_sent',
+        },
+
         ActivityDto: {
           type: 'object',
           properties: {
@@ -460,8 +485,7 @@ const swaggerOptions: Options = {
               example: '770e8400-e29b-41d4-a716-446655440000',
             },
             type: {
-              type: 'string',
-              example: 'instagram_message_sent',
+              $ref: '#/components/schemas/ActivityType',
             },
             notes: {
               type: 'string',

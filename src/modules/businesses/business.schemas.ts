@@ -6,6 +6,8 @@ import {
   Priority,
 } from '../../generated/prisma/enums.js';
 
+const UNASSIGNED_FILTER = 'unassigned';
+
 const optionalCreateTextField = z.preprocess((value) => {
   if (typeof value !== 'string') {
     return value;
@@ -109,7 +111,10 @@ export const getBusinessesSchema = z.object({
 
     source: z.enum(LeadSource).optional(),
 
-    assignedToId: z.uuid('Invalid assignedToId').optional(),
+    assignedToId: z
+      .union([z.uuid('Invalid assignedToId'), z.literal(UNASSIGNED_FILTER)])
+      .nullable()
+      .optional(),
 
     search: z.string().trim().min(1).optional(),
   }),

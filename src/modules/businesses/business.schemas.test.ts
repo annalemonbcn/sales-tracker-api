@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import {
   createBusinessSchema,
   getBusinessByIdSchema,
+  getBusinessesSchema,
   updateBusinessSchema,
 } from './business.schemas.js';
 
@@ -278,5 +279,49 @@ describe('business schemas', () => {
       priority: 'medium',
       createdById: '550e8400-e29b-41d4-a716-446655440000',
     });
+  });
+
+  it('accepts assignedToId as a valid user id in get businesses query', () => {
+    const result = getBusinessesSchema.safeParse({
+      query: {
+        assignedToId: '550e8400-e29b-41d4-a716-446655440000',
+      },
+    });
+
+    expect(result.success).toBe(true);
+  });
+
+  it('accepts assignedToId as unassigned in get businesses query', () => {
+    const result = getBusinessesSchema.safeParse({
+      query: {
+        assignedToId: 'unassigned',
+      },
+    });
+
+    expect(result.success).toBe(true);
+  });
+
+  it('accepts assignedToId null in get businesses query', () => {
+    const result = getBusinessesSchema.safeParse({
+      query: {
+        assignedToId: null,
+      },
+    });
+
+    expect(result.success).toBe(true);
+  });
+
+  it('rejects invalid assignedToId in get businesses query', () => {
+    const result = getBusinessesSchema.safeParse({
+      query: {
+        assignedToId: 'invalid-user-id',
+      },
+    });
+
+    expect(result.success).toBe(false);
+
+    if (!result.success) {
+      expect(result.error.issues[0]?.message).toBe('Invalid assignedToId');
+    }
   });
 });

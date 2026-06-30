@@ -309,4 +309,32 @@ describe('business prisma mapper', () => {
       },
     });
   });
+
+  it('builds where filter by assigned user id', () => {
+    const result = buildBusinessWhere({
+      assignedToId: '550e8400-e29b-41d4-a716-446655440000',
+    });
+
+    expect(result).toEqual({
+      assignedToId: '550e8400-e29b-41d4-a716-446655440000',
+    });
+  });
+
+  it('builds where filter for unassigned businesses', () => {
+    const result = buildBusinessWhere({
+      assignedToId: 'unassigned',
+    });
+
+    expect(result).toEqual({
+      assignedToId: null,
+    });
+  });
+
+  it('does not build assignedToId filter when assignedToId is null', () => {
+    const result = buildBusinessWhere({
+      assignedToId: null,
+    });
+
+    expect(result).toEqual({});
+  });
 });
