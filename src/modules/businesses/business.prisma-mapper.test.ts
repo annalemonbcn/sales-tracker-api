@@ -107,15 +107,17 @@ describe('business prisma mapper', () => {
       businessId: 'business-id',
       userId: 'user-id',
       assignedToId: 'assigned-user-id',
+      assignedToName: 'Assigned User',
     });
 
     expect(result).toEqual({
       businessId: 'business-id',
       userId: 'user-id',
       type: 'business_assigned',
-      notes: 'Business assigned to user assigned-user-id',
+      notes: 'Business assigned to Assigned User',
       metadata: {
         assignedToId: 'assigned-user-id',
+        assignedToName: 'Assigned User',
       },
     });
   });
@@ -267,6 +269,27 @@ describe('business prisma mapper', () => {
       assignedTo: {
         disconnect: true,
       },
+    });
+  });
+
+  it('does not build Prisma assignment data when assignedToId is omitted', () => {
+    const result = buildBusinessUpdateData({
+      name: 'Updated Business',
+    });
+
+    expect(result).toEqual({
+      name: 'Updated Business',
+    });
+  });
+
+  it('does not build Prisma assignment data when assignedToId is undefined', () => {
+    const result = buildBusinessUpdateData({
+      assignedToId: undefined,
+      name: 'Updated Business',
+    });
+
+    expect(result).toEqual({
+      name: 'Updated Business',
     });
   });
 
