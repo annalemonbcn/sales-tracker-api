@@ -75,6 +75,41 @@ describe('business schemas', () => {
     expect(result.success).toBe(true);
   });
 
+  it('rejects an empty business name update', () => {
+    const result = updateBusinessSchema.safeParse({
+      params: {
+        businessId: '550e8400-e29b-41d4-a716-446655440000',
+      },
+      body: {
+        name: '   ',
+      },
+    });
+
+    expect(result.success).toBe(false);
+
+    if (!result.success) {
+      expect(result.error.issues[0]?.message).toBe(
+        'Business name is required',
+      );
+    }
+  });
+
+  it.each(['category', 'status', 'source', 'priority'] as const)(
+    'rejects an empty %s update',
+    (field) => {
+      const result = updateBusinessSchema.safeParse({
+        params: {
+          businessId: '550e8400-e29b-41d4-a716-446655440000',
+        },
+        body: {
+          [field]: '',
+        },
+      });
+
+      expect(result.success).toBe(false);
+    },
+  );
+
   it('accepts assignedToId null to unassign a business', () => {
     const result = updateBusinessSchema.safeParse({
       params: {
