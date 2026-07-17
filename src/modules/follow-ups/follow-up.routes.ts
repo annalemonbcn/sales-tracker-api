@@ -33,6 +33,13 @@ export const followUpRouter = Router();
  *         description: Filter by follow-up status.
  *         example: pending
  *       - in: query
+ *         name: type
+ *         schema:
+ *           type: string
+ *           enum: [call, email, instagram_message, visit, meeting, proposal, dossier, other]
+ *         description: Filter by follow-up type.
+ *         example: call
+ *       - in: query
  *         name: assignedToId
  *         schema:
  *           type: string

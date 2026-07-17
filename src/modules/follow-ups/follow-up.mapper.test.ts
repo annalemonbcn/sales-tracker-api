@@ -4,6 +4,7 @@ import {
   BusinessStatus,
   Category,
   FollowUpStatus,
+  FollowUpType,
   Priority,
   UserRole,
 } from '../../generated/prisma/enums.js';
@@ -20,6 +21,7 @@ describe('toFollowUpDto', () => {
       businessId: 'business-id',
       assignedToId: 'user-id',
       status: FollowUpStatus.pending,
+      type: FollowUpType.call,
       dueDate,
       note: 'Call the business to check if they received the dossier.',
       completedAt: null,
@@ -36,6 +38,7 @@ describe('toFollowUpDto', () => {
     expect(toFollowUpDto(followUp)).toEqual({
       id: 'follow-up-id',
       status: FollowUpStatus.pending,
+      type: FollowUpType.call,
       dueDate,
       note: 'Call the business to check if they received the dossier.',
       completedAt: null,
@@ -60,6 +63,7 @@ describe('toFollowUpDto', () => {
       businessId: 'business-id',
       assignedToId: 'user-id',
       status: FollowUpStatus.pending,
+      type: FollowUpType.email,
       dueDate,
       note: null,
       completedAt: null,
@@ -76,6 +80,7 @@ describe('toFollowUpDto', () => {
     expect(toFollowUpDto(followUp)).toEqual({
       id: 'follow-up-id',
       status: FollowUpStatus.pending,
+      type: FollowUpType.email,
       dueDate,
       note: null,
       completedAt: null,
@@ -101,6 +106,7 @@ describe('toFollowUpDto', () => {
       businessId: 'business-id',
       assignedToId: 'user-id',
       status: FollowUpStatus.done,
+      type: FollowUpType.call,
       dueDate,
       note: 'Call completed.',
       completedAt,
@@ -117,6 +123,7 @@ describe('toFollowUpDto', () => {
     expect(toFollowUpDto(followUp)).toEqual({
       id: 'follow-up-id',
       status: FollowUpStatus.done,
+      type: FollowUpType.call,
       dueDate,
       note: 'Call completed.',
       completedAt,
@@ -143,6 +150,7 @@ describe('toFollowUpTaskDto', () => {
       businessId: 'business-id',
       assignedToId: 'user-id',
       status: FollowUpStatus.pending,
+      type: FollowUpType.call,
       dueDate,
       note: 'Call the business to check if they received the dossier.',
       completedAt: null,
@@ -166,6 +174,7 @@ describe('toFollowUpTaskDto', () => {
     expect(toFollowUpTaskDto(followUp)).toEqual({
       id: 'follow-up-id',
       status: FollowUpStatus.pending,
+      type: FollowUpType.call,
       dueDate,
       note: 'Call the business to check if they received the dossier.',
       completedAt: null,
@@ -197,6 +206,7 @@ describe('toFollowUpTaskDto', () => {
       businessId: 'business-id',
       assignedToId: 'user-id',
       status: FollowUpStatus.pending,
+      type: FollowUpType.email,
       dueDate,
       note: null,
       completedAt: null,
@@ -220,6 +230,7 @@ describe('toFollowUpTaskDto', () => {
     expect(toFollowUpTaskDto(followUp)).toEqual({
       id: 'follow-up-id',
       status: FollowUpStatus.pending,
+      type: FollowUpType.email,
       dueDate,
       note: null,
       completedAt: null,
@@ -252,6 +263,7 @@ describe('toFollowUpTaskDto', () => {
       businessId: 'business-id',
       assignedToId: 'user-id',
       status: FollowUpStatus.done,
+      type: FollowUpType.call,
       dueDate,
       note: 'Call completed.',
       completedAt,
@@ -275,6 +287,7 @@ describe('toFollowUpTaskDto', () => {
     expect(toFollowUpTaskDto(followUp)).toEqual({
       id: 'follow-up-id',
       status: FollowUpStatus.done,
+      type: FollowUpType.call,
       dueDate,
       note: 'Call completed.',
       completedAt,

@@ -1,5 +1,9 @@
 import { z } from 'zod';
-import { FollowUpStatus, Priority } from '../../generated/prisma/enums.js';
+import {
+  FollowUpStatus,
+  FollowUpType,
+  Priority,
+} from '../../generated/prisma/enums.js';
 
 export const getBusinessFollowUpsSchema = z.object({
   params: z.object({
@@ -17,6 +21,8 @@ export const createFollowUpSchema = z.object({
   }),
 
   body: z.object({
+    type: z.enum(FollowUpType),
+
     assignedToId: z.uuid('Invalid assignedToId'),
 
     dueDate: z.iso
@@ -83,6 +89,8 @@ export type UpdateFollowUpInput = z.infer<typeof updateFollowUpSchema>['body'];
 export const getFollowUpsSchema = z.object({
   query: z.object({
     status: z.enum(FollowUpStatus).optional(),
+
+    type: z.enum(FollowUpType).optional(),
 
     assignedToId: z.uuid('Invalid assignedToId').optional(),
 

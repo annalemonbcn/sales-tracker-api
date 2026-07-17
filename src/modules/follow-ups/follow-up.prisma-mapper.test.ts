@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import {
   ActivityType,
   FollowUpStatus,
+  FollowUpType,
   Priority,
 } from '../../generated/prisma/enums.js';
 import {
@@ -29,6 +30,7 @@ describe('buildFollowUpCreateData', () => {
         businessId: 'business-id',
       },
       {
+        type: FollowUpType.call,
         assignedToId: 'user-id',
         dueDate,
         note: 'Call the business.',
@@ -39,6 +41,7 @@ describe('buildFollowUpCreateData', () => {
       businessId: 'business-id',
       assignedToId: 'user-id',
       status: FollowUpStatus.pending,
+      type: FollowUpType.call,
       dueDate,
       note: 'Call the business.',
     });
@@ -52,6 +55,7 @@ describe('buildFollowUpCreateData', () => {
         businessId: 'business-id',
       },
       {
+        type: FollowUpType.email,
         assignedToId: 'user-id',
         dueDate,
       },
@@ -61,6 +65,7 @@ describe('buildFollowUpCreateData', () => {
       businessId: 'business-id',
       assignedToId: 'user-id',
       status: FollowUpStatus.pending,
+      type: FollowUpType.email,
       dueDate,
       note: null,
     });
@@ -344,6 +349,16 @@ describe('buildFollowUpWhere', () => {
     });
   });
 
+  it('builds where with type filter', () => {
+    const result = buildFollowUpWhere({
+      type: FollowUpType.call,
+    });
+
+    expect(result).toEqual({
+      type: FollowUpType.call,
+    });
+  });
+
   it('builds where with assignedToId filter', () => {
     const result = buildFollowUpWhere({
       assignedToId: '550e8400-e29b-41d4-a716-446655440000',
@@ -405,6 +420,7 @@ describe('buildFollowUpWhere', () => {
 
     const result = buildFollowUpWhere({
       status: FollowUpStatus.pending,
+      type: FollowUpType.call,
       assignedToId: '550e8400-e29b-41d4-a716-446655440000',
       businessId: '660e8400-e29b-41d4-a716-446655440000',
       priority: Priority.high,
@@ -414,6 +430,7 @@ describe('buildFollowUpWhere', () => {
 
     expect(result).toEqual({
       status: FollowUpStatus.pending,
+      type: FollowUpType.call,
       assignedToId: '550e8400-e29b-41d4-a716-446655440000',
       businessId: '660e8400-e29b-41d4-a716-446655440000',
       business: {

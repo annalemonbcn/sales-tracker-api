@@ -557,6 +557,21 @@ const swaggerOptions: Options = {
           required: ['type', 'userId'],
         },
 
+        FollowUpType: {
+          type: 'string',
+          enum: [
+            'call',
+            'email',
+            'instagram_message',
+            'visit',
+            'meeting',
+            'proposal',
+            'dossier',
+            'other',
+          ],
+          example: 'call',
+        },
+
         FollowUpDto: {
           type: 'object',
           properties: {
@@ -569,6 +584,9 @@ const swaggerOptions: Options = {
               type: 'string',
               enum: ['pending', 'done', 'cancelled'],
               example: 'pending',
+            },
+            type: {
+              $ref: '#/components/schemas/FollowUpType',
             },
             dueDate: {
               type: 'string',
@@ -604,6 +622,7 @@ const swaggerOptions: Options = {
           required: [
             'id',
             'status',
+            'type',
             'dueDate',
             'note',
             'completedAt',
@@ -626,16 +645,13 @@ const swaggerOptions: Options = {
               example: 'Bella Hair Studio',
             },
             category: {
-              type: 'string',
-              example: 'hairdresser',
+              $ref: '#/components/schemas/Category',
             },
             status: {
-              type: 'string',
-              example: 'waiting_response',
+              $ref: '#/components/schemas/BusinessStatus',
             },
             priority: {
-              type: 'string',
-              example: 'high',
+              $ref: '#/components/schemas/Priority',
             },
           },
           required: ['id', 'name', 'category', 'status', 'priority'],
@@ -653,6 +669,9 @@ const swaggerOptions: Options = {
               type: 'string',
               enum: ['pending', 'done', 'cancelled'],
               example: 'pending',
+            },
+            type: {
+              $ref: '#/components/schemas/FollowUpType',
             },
             dueDate: {
               type: 'string',
@@ -691,6 +710,7 @@ const swaggerOptions: Options = {
           required: [
             'id',
             'status',
+            'type',
             'dueDate',
             'note',
             'completedAt',
@@ -704,6 +724,9 @@ const swaggerOptions: Options = {
         CreateFollowUpRequest: {
           type: 'object',
           properties: {
+            type: {
+              $ref: '#/components/schemas/FollowUpType',
+            },
             assignedToId: {
               type: 'string',
               format: 'uuid',
@@ -720,7 +743,7 @@ const swaggerOptions: Options = {
                 'Call the business to check if they received the dossier.',
             },
           },
-          required: ['assignedToId', 'dueDate'],
+          required: ['type', 'assignedToId', 'dueDate'],
         },
 
         UpdateFollowUpRequest: {

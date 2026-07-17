@@ -46,6 +46,7 @@ export type FollowUpDto = Pick<
   FollowUp,
   | 'id'
   | 'status'
+  | 'type'
   | 'dueDate'
   | 'note'
   | 'completedAt'
@@ -64,6 +65,7 @@ export type FollowUpTaskDto = Pick<
   FollowUp,
   | 'id'
   | 'status'
+  | 'type'
   | 'dueDate'
   | 'note'
   | 'completedAt'
@@ -79,6 +81,7 @@ export const toFollowUpDto = (
 ): FollowUpDto => ({
   id: followUp.id,
   status: followUp.status,
+  type: followUp.type,
   dueDate: followUp.dueDate,
   note: followUp.note,
   completedAt: followUp.completedAt,
@@ -98,6 +101,7 @@ export const toFollowUpTaskDto = (
   return {
     id: followUp.id,
     status: followUp.status,
+    type: followUp.type,
     dueDate: followUp.dueDate,
     note: followUp.note,
     completedAt: followUp.completedAt,

@@ -42,6 +42,7 @@ describe('createFollowUpSchema', () => {
         businessId: '550e8400-e29b-41d4-a716-446655440000',
       },
       body: {
+        type: 'call',
         assignedToId: '660e8400-e29b-41d4-a716-446655440000',
         dueDate: '2026-07-05T10:00:00.000Z',
         note: 'Call the business to check if they received the dossier.',
@@ -64,6 +65,7 @@ describe('createFollowUpSchema', () => {
         businessId: '550e8400-e29b-41d4-a716-446655440000',
       },
       body: {
+        type: 'email',
         assignedToId: '660e8400-e29b-41d4-a716-446655440000',
         dueDate: '2026-07-05T10:00:00.000Z',
       },
@@ -78,6 +80,7 @@ describe('createFollowUpSchema', () => {
         businessId: 'not-a-uuid',
       },
       body: {
+        type: 'call',
         assignedToId: '660e8400-e29b-41d4-a716-446655440000',
         dueDate: '2026-07-05T10:00:00.000Z',
       },
@@ -96,6 +99,7 @@ describe('createFollowUpSchema', () => {
         businessId: '550e8400-e29b-41d4-a716-446655440000',
       },
       body: {
+        type: 'call',
         assignedToId: 'not-a-uuid',
         dueDate: '2026-07-05T10:00:00.000Z',
       },
@@ -114,6 +118,7 @@ describe('createFollowUpSchema', () => {
         businessId: '550e8400-e29b-41d4-a716-446655440000',
       },
       body: {
+        type: 'call',
         assignedToId: '660e8400-e29b-41d4-a716-446655440000',
         dueDate: 'not-a-date',
       },
@@ -132,6 +137,7 @@ describe('createFollowUpSchema', () => {
         businessId: '550e8400-e29b-41d4-a716-446655440000',
       },
       body: {
+        type: 'call',
         assignedToId: '660e8400-e29b-41d4-a716-446655440000',
         dueDate: '2026-07-05T10:00:00.000Z',
         note: '',
@@ -153,6 +159,7 @@ describe('createFollowUpSchema', () => {
         businessId: '550e8400-e29b-41d4-a716-446655440000',
       },
       body: {
+        type: 'call',
         assignedToId: '660e8400-e29b-41d4-a716-446655440000',
         dueDate: '2026-07-05T10:00:00.000Z',
         note: '   Call the business   ',
@@ -164,6 +171,35 @@ describe('createFollowUpSchema', () => {
     if (result.success) {
       expect(result.data.body.note).toBe('Call the business');
     }
+  });
+
+  it('rejects a follow-up creation payload without type', () => {
+    const result = createFollowUpSchema.safeParse({
+      params: {
+        businessId: '550e8400-e29b-41d4-a716-446655440000',
+      },
+      body: {
+        assignedToId: '660e8400-e29b-41d4-a716-446655440000',
+        dueDate: '2026-07-05T10:00:00.000Z',
+      },
+    });
+
+    expect(result.success).toBe(false);
+  });
+
+  it('rejects an invalid follow-up type', () => {
+    const result = createFollowUpSchema.safeParse({
+      params: {
+        businessId: '550e8400-e29b-41d4-a716-446655440000',
+      },
+      body: {
+        type: 'sms',
+        assignedToId: '660e8400-e29b-41d4-a716-446655440000',
+        dueDate: '2026-07-05T10:00:00.000Z',
+      },
+    });
+
+    expect(result.success).toBe(false);
   });
 });
 
@@ -418,6 +454,20 @@ describe('getFollowUpsSchema', () => {
     }
   });
 
+  it('accepts a valid type filter', () => {
+    const result = getFollowUpsSchema.safeParse({
+      query: {
+        type: 'call',
+      },
+    });
+
+    expect(result.success).toBe(true);
+
+    if (result.success) {
+      expect(result.data.query.type).toBe('call');
+    }
+  });
+
   it('accepts a valid assignedToId filter', () => {
     const result = getFollowUpsSchema.safeParse({
       query: {
@@ -466,6 +516,7 @@ describe('getFollowUpsSchema', () => {
     const result = getFollowUpsSchema.safeParse({
       query: {
         status: 'pending',
+        type: 'call',
         assignedToId: '550e8400-e29b-41d4-a716-446655440000',
         businessId: '660e8400-e29b-41d4-a716-446655440000',
         priority: 'high',
@@ -479,6 +530,7 @@ describe('getFollowUpsSchema', () => {
     if (result.success) {
       expect(result.data.query).toEqual({
         status: 'pending',
+        type: 'call',
         assignedToId: '550e8400-e29b-41d4-a716-446655440000',
         businessId: '660e8400-e29b-41d4-a716-446655440000',
         priority: 'high',
@@ -514,6 +566,16 @@ describe('getFollowUpsSchema', () => {
     const result = getFollowUpsSchema.safeParse({
       query: {
         status: 'invalid-status',
+      },
+    });
+
+    expect(result.success).toBe(false);
+  });
+
+  it('rejects an invalid type filter', () => {
+    const result = getFollowUpsSchema.safeParse({
+      query: {
+        type: 'sms',
       },
     });
 

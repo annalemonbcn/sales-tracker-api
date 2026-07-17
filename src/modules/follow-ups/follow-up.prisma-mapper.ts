@@ -15,6 +15,7 @@ export const buildFollowUpCreateData = (
     businessId: params.businessId,
     assignedToId: data.assignedToId,
     status: FollowUpStatus.pending,
+    type: data.type,
     dueDate: data.dueDate,
     note: data.note ?? null,
   };
@@ -169,6 +170,8 @@ export const buildFollowUpWhere = (
 ): Prisma.FollowUpWhereInput => {
   return {
     ...(query.status ? { status: query.status } : {}),
+
+    ...(query.type ? { type: query.type } : {}),
 
     ...(query.assignedToId
       ? {
