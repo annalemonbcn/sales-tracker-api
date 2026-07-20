@@ -30,6 +30,7 @@ describe('buildFollowUpCreateData', () => {
         businessId: 'business-id',
       },
       {
+        title: 'Call the business',
         type: FollowUpType.call,
         assignedToId: 'user-id',
         dueDate,
@@ -42,6 +43,7 @@ describe('buildFollowUpCreateData', () => {
       assignedToId: 'user-id',
       status: FollowUpStatus.pending,
       type: FollowUpType.call,
+      title: 'Call the business',
       dueDate,
       note: 'Call the business.',
     });
@@ -55,6 +57,7 @@ describe('buildFollowUpCreateData', () => {
         businessId: 'business-id',
       },
       {
+        title: 'Send email',
         type: FollowUpType.email,
         assignedToId: 'user-id',
         dueDate,
@@ -66,6 +69,7 @@ describe('buildFollowUpCreateData', () => {
       assignedToId: 'user-id',
       status: FollowUpStatus.pending,
       type: FollowUpType.email,
+      title: 'Send email',
       dueDate,
       note: null,
     });
@@ -238,6 +242,16 @@ describe('buildFollowUpCancelledActivityData', () => {
 });
 
 describe('buildFollowUpUpdateData', () => {
+  it('builds update data for title', () => {
+    const result = buildFollowUpUpdateData({
+      title: 'Visit the business',
+    });
+
+    expect(result).toEqual({
+      title: 'Visit the business',
+    });
+  });
+
   it('builds update data for dueDate', () => {
     const dueDate = new Date('2026-07-05T10:00:00.000Z');
 
@@ -278,6 +292,7 @@ describe('buildFollowUpUpdateData', () => {
     const dueDate = new Date('2026-07-05T10:00:00.000Z');
 
     const result = buildFollowUpUpdateData({
+      title: 'Visit the business',
       assignedToId: '660e8400-e29b-41d4-a716-446655440000',
       dueDate,
       note: 'Visit the business in person.',
@@ -289,6 +304,7 @@ describe('buildFollowUpUpdateData', () => {
           id: '660e8400-e29b-41d4-a716-446655440000',
         },
       },
+      title: 'Visit the business',
       dueDate,
       note: 'Visit the business in person.',
     });

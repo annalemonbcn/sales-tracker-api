@@ -107,7 +107,7 @@ followUpRouter.get('/', validateRequest(getFollowUpsSchema), getFollowUps);
  * /follow-ups/{followUpId}:
  *   patch:
  *     summary: Update follow-up
- *     description: Updates a follow-up task. Only assignedToId, dueDate and note can be updated. Updating dueDate creates a follow_up_updated activity and may recalculate business.nextFollowUpAt.
+ *     description: Updates a follow-up task. Only title, assignedToId, dueDate and note can be updated. Updating dueDate creates a follow_up_updated activity and may recalculate business.nextFollowUpAt.
  *     tags:
  *       - Follow-ups
  *     parameters:

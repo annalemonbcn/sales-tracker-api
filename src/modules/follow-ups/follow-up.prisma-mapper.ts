@@ -16,6 +16,7 @@ export const buildFollowUpCreateData = (
     assignedToId: data.assignedToId,
     status: FollowUpStatus.pending,
     type: data.type,
+    title: data.title,
     dueDate: data.dueDate,
     note: data.note ?? null,
   };
@@ -128,6 +129,12 @@ export const buildFollowUpUpdateData = (
               id: data.assignedToId,
             },
           },
+        }
+      : {}),
+
+    ...(data.title !== undefined
+      ? {
+          title: data.title,
         }
       : {}),
 

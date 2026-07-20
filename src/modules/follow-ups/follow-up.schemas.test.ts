@@ -42,6 +42,7 @@ describe('createFollowUpSchema', () => {
         businessId: '550e8400-e29b-41d4-a716-446655440000',
       },
       body: {
+        title: 'Call the business',
         type: 'call',
         assignedToId: '660e8400-e29b-41d4-a716-446655440000',
         dueDate: '2026-07-05T10:00:00.000Z',
@@ -65,6 +66,7 @@ describe('createFollowUpSchema', () => {
         businessId: '550e8400-e29b-41d4-a716-446655440000',
       },
       body: {
+        title: 'Send email',
         type: 'email',
         assignedToId: '660e8400-e29b-41d4-a716-446655440000',
         dueDate: '2026-07-05T10:00:00.000Z',
@@ -80,6 +82,7 @@ describe('createFollowUpSchema', () => {
         businessId: 'not-a-uuid',
       },
       body: {
+        title: 'Call the business',
         type: 'call',
         assignedToId: '660e8400-e29b-41d4-a716-446655440000',
         dueDate: '2026-07-05T10:00:00.000Z',
@@ -99,6 +102,7 @@ describe('createFollowUpSchema', () => {
         businessId: '550e8400-e29b-41d4-a716-446655440000',
       },
       body: {
+        title: 'Call the business',
         type: 'call',
         assignedToId: 'not-a-uuid',
         dueDate: '2026-07-05T10:00:00.000Z',
@@ -118,6 +122,7 @@ describe('createFollowUpSchema', () => {
         businessId: '550e8400-e29b-41d4-a716-446655440000',
       },
       body: {
+        title: 'Call the business',
         type: 'call',
         assignedToId: '660e8400-e29b-41d4-a716-446655440000',
         dueDate: 'not-a-date',
@@ -137,6 +142,7 @@ describe('createFollowUpSchema', () => {
         businessId: '550e8400-e29b-41d4-a716-446655440000',
       },
       body: {
+        title: 'Call the business',
         type: 'call',
         assignedToId: '660e8400-e29b-41d4-a716-446655440000',
         dueDate: '2026-07-05T10:00:00.000Z',
@@ -159,6 +165,7 @@ describe('createFollowUpSchema', () => {
         businessId: '550e8400-e29b-41d4-a716-446655440000',
       },
       body: {
+        title: '  Call the business  ',
         type: 'call',
         assignedToId: '660e8400-e29b-41d4-a716-446655440000',
         dueDate: '2026-07-05T10:00:00.000Z',
@@ -169,7 +176,30 @@ describe('createFollowUpSchema', () => {
     expect(result.success).toBe(true);
 
     if (result.success) {
+      expect(result.data.body.title).toBe('Call the business');
       expect(result.data.body.note).toBe('Call the business');
+    }
+  });
+
+  it('rejects an empty title when creating a follow-up', () => {
+    const result = createFollowUpSchema.safeParse({
+      params: {
+        businessId: '550e8400-e29b-41d4-a716-446655440000',
+      },
+      body: {
+        title: '   ',
+        type: 'call',
+        assignedToId: '660e8400-e29b-41d4-a716-446655440000',
+        dueDate: '2026-07-05T10:00:00.000Z',
+      },
+    });
+
+    expect(result.success).toBe(false);
+
+    if (!result.success) {
+      expect(result.error.issues[0]?.message).toBe(
+        'Follow-up title is required',
+      );
     }
   });
 
@@ -179,6 +209,7 @@ describe('createFollowUpSchema', () => {
         businessId: '550e8400-e29b-41d4-a716-446655440000',
       },
       body: {
+        title: 'Call the business',
         assignedToId: '660e8400-e29b-41d4-a716-446655440000',
         dueDate: '2026-07-05T10:00:00.000Z',
       },
@@ -193,6 +224,7 @@ describe('createFollowUpSchema', () => {
         businessId: '550e8400-e29b-41d4-a716-446655440000',
       },
       body: {
+        title: 'Call the business',
         type: 'sms',
         assignedToId: '660e8400-e29b-41d4-a716-446655440000',
         dueDate: '2026-07-05T10:00:00.000Z',
@@ -256,6 +288,23 @@ describe('cancelFollowUpSchema', () => {
 });
 
 describe('updateFollowUpSchema', () => {
+  it('accepts a valid title update', () => {
+    const result = updateFollowUpSchema.safeParse({
+      params: {
+        followUpId: '550e8400-e29b-41d4-a716-446655440000',
+      },
+      body: {
+        title: 'Visit the business',
+      },
+    });
+
+    expect(result.success).toBe(true);
+
+    if (result.success) {
+      expect(result.data.body.title).toBe('Visit the business');
+    }
+  });
+
   it('accepts a valid dueDate update', () => {
     const result = updateFollowUpSchema.safeParse({
       params: {
@@ -326,6 +375,7 @@ describe('updateFollowUpSchema', () => {
         followUpId: '550e8400-e29b-41d4-a716-446655440000',
       },
       body: {
+        title: '  Visit the business  ',
         assignedToId: '660e8400-e29b-41d4-a716-446655440000',
         dueDate: '2026-07-05T10:00:00.000Z',
         note: 'Visit the business in person.',
@@ -335,6 +385,7 @@ describe('updateFollowUpSchema', () => {
     expect(result.success).toBe(true);
 
     if (result.success) {
+      expect(result.data.body.title).toBe('Visit the business');
       expect(result.data.body.dueDate).toBeInstanceOf(Date);
     }
   });
@@ -422,6 +473,25 @@ describe('updateFollowUpSchema', () => {
     if (!result.success) {
       expect(result.error.issues[0]?.message).toBe(
         'Follow-up note is required',
+      );
+    }
+  });
+
+  it('rejects an empty title when title is provided', () => {
+    const result = updateFollowUpSchema.safeParse({
+      params: {
+        followUpId: '550e8400-e29b-41d4-a716-446655440000',
+      },
+      body: {
+        title: '',
+      },
+    });
+
+    expect(result.success).toBe(false);
+
+    if (!result.success) {
+      expect(result.error.issues[0]?.message).toBe(
+        'Follow-up title is required',
       );
     }
   });

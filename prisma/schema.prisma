@@ -178,6 +178,7 @@ model FollowUp {
   status FollowUpStatus @default(pending)
   type   FollowUpType
 
+  title   String
   dueDate DateTime
   note    String?
 

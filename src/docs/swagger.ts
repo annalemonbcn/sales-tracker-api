@@ -588,6 +588,10 @@ const swaggerOptions: Options = {
             type: {
               $ref: '#/components/schemas/FollowUpType',
             },
+            title: {
+              type: 'string',
+              example: 'Call the business',
+            },
             dueDate: {
               type: 'string',
               format: 'date-time',
@@ -623,6 +627,7 @@ const swaggerOptions: Options = {
             'id',
             'status',
             'type',
+            'title',
             'dueDate',
             'note',
             'completedAt',
@@ -673,6 +678,10 @@ const swaggerOptions: Options = {
             type: {
               $ref: '#/components/schemas/FollowUpType',
             },
+            title: {
+              type: 'string',
+              example: 'Call the business',
+            },
             dueDate: {
               type: 'string',
               format: 'date-time',
@@ -711,6 +720,7 @@ const swaggerOptions: Options = {
             'id',
             'status',
             'type',
+            'title',
             'dueDate',
             'note',
             'completedAt',
@@ -724,6 +734,10 @@ const swaggerOptions: Options = {
         CreateFollowUpRequest: {
           type: 'object',
           properties: {
+            title: {
+              type: 'string',
+              example: 'Call the business',
+            },
             type: {
               $ref: '#/components/schemas/FollowUpType',
             },
@@ -743,12 +757,16 @@ const swaggerOptions: Options = {
                 'Call the business to check if they received the dossier.',
             },
           },
-          required: ['type', 'assignedToId', 'dueDate'],
+          required: ['title', 'type', 'assignedToId', 'dueDate'],
         },
 
         UpdateFollowUpRequest: {
           type: 'object',
           properties: {
+            title: {
+              type: 'string',
+              example: 'Visit the business',
+            },
             assignedToId: {
               type: 'string',
               format: 'uuid',
@@ -765,7 +783,7 @@ const swaggerOptions: Options = {
             },
           },
           description:
-            'At least one field is required. Only assignedToId, dueDate and note can be updated from this endpoint.',
+            'At least one field is required. Only title, assignedToId, dueDate and note can be updated from this endpoint.',
         },
 
         ErrorResponse: {

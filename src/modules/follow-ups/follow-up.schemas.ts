@@ -21,6 +21,8 @@ export const createFollowUpSchema = z.object({
   }),
 
   body: z.object({
+    title: z.string().trim().min(1, 'Follow-up title is required'),
+
     type: z.enum(FollowUpType),
 
     assignedToId: z.uuid('Invalid assignedToId'),
@@ -66,6 +68,8 @@ export const updateFollowUpSchema = z.object({
 
   body: z
     .object({
+      title: z.string().trim().min(1, 'Follow-up title is required').optional(),
+
       assignedToId: z.uuid('Invalid assignedToId').optional(),
 
       dueDate: z.iso
