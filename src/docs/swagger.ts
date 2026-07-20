@@ -705,6 +705,12 @@ const swaggerOptions: Options = {
             business: {
               $ref: '#/components/schemas/FollowUpBusinessDto',
             },
+            activities: {
+              type: 'array',
+              items: {
+                $ref: '#/components/schemas/ActivityDto',
+              },
+            },
             createdAt: {
               type: 'string',
               format: 'date-time',
@@ -726,6 +732,7 @@ const swaggerOptions: Options = {
             'completedAt',
             'assignedTo',
             'business',
+            'activities',
             'createdAt',
             'updatedAt',
           ],

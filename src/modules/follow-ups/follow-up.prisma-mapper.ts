@@ -30,11 +30,11 @@ export const buildFollowUpCreatedActivityData = (params: {
 }): Prisma.ActivityUncheckedCreateInput => {
   return {
     businessId: params.businessId,
+    followUpId: params.followUpId,
     userId: params.userId,
     type: ActivityType.follow_up_created,
     notes: `Follow-up created for ${params.dueDate.toISOString()}`,
     metadata: {
-      followUpId: params.followUpId,
       dueDate: params.dueDate.toISOString(),
     },
   };
@@ -76,11 +76,11 @@ export const buildFollowUpDoneActivityData = (params: {
 }): Prisma.ActivityUncheckedCreateInput => {
   return {
     businessId: params.businessId,
+    followUpId: params.followUpId,
     userId: params.userId,
     type: ActivityType.follow_up_done,
     notes: `Follow-up completed at ${params.completedAt.toISOString()}`,
     metadata: {
-      followUpId: params.followUpId,
       completedAt: params.completedAt.toISOString(),
     },
   };
@@ -108,11 +108,11 @@ export const buildFollowUpCancelledActivityData = (params: {
 }): Prisma.ActivityUncheckedCreateInput => {
   return {
     businessId: params.businessId,
+    followUpId: params.followUpId,
     userId: params.userId,
     type: ActivityType.follow_up_cancelled,
     notes: `Follow-up cancelled at ${params.cancelledAt.toISOString()}`,
     metadata: {
-      followUpId: params.followUpId,
       cancelledAt: params.cancelledAt.toISOString(),
     },
   };
@@ -161,11 +161,11 @@ export const buildFollowUpUpdatedActivityData = (params: {
 }): Prisma.ActivityUncheckedCreateInput => {
   return {
     businessId: params.businessId,
+    followUpId: params.followUpId,
     userId: params.userId,
     type: ActivityType.follow_up_updated,
     notes: `Follow-up updated from ${params.previousDueDate.toISOString()} to ${params.nextDueDate.toISOString()}`,
     metadata: {
-      followUpId: params.followUpId,
       previousDueDate: params.previousDueDate.toISOString(),
       nextDueDate: params.nextDueDate.toISOString(),
     },

@@ -4,6 +4,7 @@ import type {
   Prisma,
   User,
 } from '../../generated/prisma/client.js';
+import { toActivityDto, type ActivityDto } from '../activities/activity.mapper.js';
 
 type FollowUpWithAssignedUser = Prisma.FollowUpGetPayload<{
   include: {
@@ -37,6 +38,18 @@ type FollowUpWithAssignedUserAndBusiness = Prisma.FollowUpGetPayload<{
         category: true;
         status: true;
         priority: true;
+      };
+    };
+    activities: {
+      include: {
+        user: {
+          select: {
+            id: true;
+            name: true;
+            email: true;
+            role: true;
+          };
+        };
       };
     };
   };
@@ -76,6 +89,7 @@ export type FollowUpTaskDto = Pick<
 > & {
   assignedTo: FollowUpAssignedUserDto;
   business: FollowUpBusinessDto;
+  activities: ActivityDto[];
 };
 
 export const toFollowUpDto = (
@@ -124,6 +138,8 @@ export const toFollowUpTaskDto = (
       status: followUp.business.status,
       priority: followUp.business.priority,
     },
+
+    activities: followUp.activities.map(toActivityDto),
 
     createdAt: followUp.createdAt,
     updatedAt: followUp.updatedAt,

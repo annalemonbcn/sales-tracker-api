@@ -9,6 +9,7 @@ describe('toActivityDto', () => {
     const activity = {
       id: 'activity-id',
       businessId: 'business-id',
+      followUpId: null,
       userId: 'user-id',
       type: 'priority_changed',
       notes: 'Priority changed from medium to high',
@@ -49,6 +50,7 @@ describe('toActivityDto', () => {
     const activity = {
       id: 'activity-id',
       businessId: 'business-id',
+      followUpId: null,
       userId: 'user-id',
       type: 'business_created',
       notes: 'Business created',

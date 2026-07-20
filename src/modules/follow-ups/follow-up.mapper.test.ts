@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import {
+  ActivityType,
   BusinessStatus,
   Category,
   FollowUpStatus,
@@ -150,6 +151,7 @@ describe('toFollowUpTaskDto', () => {
     const dueDate = new Date('2026-07-05T10:00:00.000Z');
     const createdAt = new Date('2026-06-23T10:00:00.000Z');
     const updatedAt = new Date('2026-06-23T10:30:00.000Z');
+    const activityCreatedAt = new Date('2026-06-23T10:05:00.000Z');
 
     const followUp: Parameters<typeof toFollowUpTaskDto>[0] = {
       id: 'follow-up-id',
@@ -176,6 +178,24 @@ describe('toFollowUpTaskDto', () => {
         status: BusinessStatus.waiting_response,
         priority: Priority.high,
       },
+      activities: [
+        {
+          id: 'activity-id',
+          businessId: 'business-id',
+          followUpId: 'follow-up-id',
+          userId: 'user-id',
+          type: ActivityType.follow_up_created,
+          notes: 'Follow-up created',
+          metadata: { dueDate: dueDate.toISOString() },
+          createdAt: activityCreatedAt,
+          user: {
+            id: 'user-id',
+            name: 'Anna',
+            email: 'anna@example.com',
+            role: UserRole.admin,
+          },
+        },
+      ],
     };
 
     expect(toFollowUpTaskDto(followUp)).toEqual({
@@ -199,6 +219,21 @@ describe('toFollowUpTaskDto', () => {
         status: BusinessStatus.waiting_response,
         priority: Priority.high,
       },
+      activities: [
+        {
+          id: 'activity-id',
+          type: ActivityType.follow_up_created,
+          notes: 'Follow-up created',
+          metadata: { dueDate: dueDate.toISOString() },
+          user: {
+            id: 'user-id',
+            name: 'Anna',
+            email: 'anna@example.com',
+            role: UserRole.admin,
+          },
+          createdAt: activityCreatedAt,
+        },
+      ],
       createdAt,
       updatedAt,
     });
@@ -234,6 +269,7 @@ describe('toFollowUpTaskDto', () => {
         status: BusinessStatus.waiting_response,
         priority: Priority.high,
       },
+      activities: [],
     };
 
     expect(toFollowUpTaskDto(followUp)).toEqual({
@@ -257,6 +293,7 @@ describe('toFollowUpTaskDto', () => {
         status: BusinessStatus.waiting_response,
         priority: Priority.high,
       },
+      activities: [],
       createdAt,
       updatedAt,
     });
@@ -293,6 +330,7 @@ describe('toFollowUpTaskDto', () => {
         status: BusinessStatus.interested,
         priority: Priority.high,
       },
+      activities: [],
     };
 
     expect(toFollowUpTaskDto(followUp)).toEqual({
@@ -316,6 +354,7 @@ describe('toFollowUpTaskDto', () => {
         status: BusinessStatus.interested,
         priority: Priority.high,
       },
+      activities: [],
       createdAt,
       updatedAt,
     });

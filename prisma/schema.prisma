@@ -155,6 +155,9 @@ model Activity {
   businessId String
   business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
 
+  followUpId String?
+  followUp   FollowUp? @relation(fields: [followUpId], references: [id], onDelete: SetNull)
+
   userId String
   user   User   @relation(fields: [userId], references: [id])
 
@@ -164,6 +167,9 @@ model Activity {
   metadata Json?
 
   createdAt DateTime @default(now())
+
+  // TODO: indexs?
+  @@index([followUpId, createdAt])
 }
 
 model FollowUp {
@@ -183,6 +189,8 @@ model FollowUp {
   note    String?
 
   completedAt DateTime?
+
+  activities Activity[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

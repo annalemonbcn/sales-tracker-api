@@ -179,6 +179,7 @@ describe('toBusinessDetailDto', () => {
         {
           id: 'activity-id',
           businessId: 'business-id',
+          followUpId: null,
           userId: 'user-id',
           type: ActivityType.instagram_message_sent,
           notes: 'Initial Instagram message sent.',

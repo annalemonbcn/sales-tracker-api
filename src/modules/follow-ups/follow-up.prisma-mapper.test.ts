@@ -89,11 +89,11 @@ describe('buildFollowUpCreatedActivityData', () => {
 
     expect(result).toEqual({
       businessId: 'business-id',
+      followUpId: 'follow-up-id',
       userId: 'user-id',
       type: ActivityType.follow_up_created,
       notes: 'Follow-up created for 2026-07-05T10:00:00.000Z',
       metadata: {
-        followUpId: 'follow-up-id',
         dueDate: '2026-07-05T10:00:00.000Z',
       },
     });
@@ -176,11 +176,11 @@ describe('buildFollowUpDoneActivityData', () => {
 
     expect(result).toEqual({
       businessId: 'business-id',
+      followUpId: 'follow-up-id',
       userId: 'user-id',
       type: ActivityType.follow_up_done,
       notes: 'Follow-up completed at 2026-07-05T11:00:00.000Z',
       metadata: {
-        followUpId: 'follow-up-id',
         completedAt: '2026-07-05T11:00:00.000Z',
       },
     });
@@ -230,11 +230,11 @@ describe('buildFollowUpCancelledActivityData', () => {
 
     expect(result).toEqual({
       businessId: 'business-id',
+      followUpId: 'follow-up-id',
       userId: 'user-id',
       type: ActivityType.follow_up_cancelled,
       notes: 'Follow-up cancelled at 2026-07-05T11:00:00.000Z',
       metadata: {
-        followUpId: 'follow-up-id',
         cancelledAt: '2026-07-05T11:00:00.000Z',
       },
     });
@@ -335,12 +335,12 @@ describe('buildFollowUpUpdatedActivityData', () => {
 
     expect(result).toEqual({
       businessId: 'business-id',
+      followUpId: 'follow-up-id',
       userId: 'user-id',
       type: ActivityType.follow_up_updated,
       notes:
         'Follow-up updated from 2026-07-05T10:00:00.000Z to 2026-07-08T12:00:00.000Z',
       metadata: {
-        followUpId: 'follow-up-id',
         previousDueDate: '2026-07-05T10:00:00.000Z',
         nextDueDate: '2026-07-08T12:00:00.000Z',
       },
