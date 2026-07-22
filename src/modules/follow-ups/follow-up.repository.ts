@@ -9,6 +9,17 @@ const followUpUserSelect = {
   role: true,
 } satisfies Prisma.UserSelect;
 
+const followUpActivityInclude = {
+  orderBy: {
+    createdAt: 'desc',
+  },
+  include: {
+    user: {
+      select: followUpUserSelect,
+    },
+  },
+} satisfies Prisma.ActivityFindManyArgs;
+
 export const followUpRepository = {
   findBusinessById: (tx: TransactionClient, businessId: string) => {
     return tx.business.findUnique({
@@ -114,6 +125,7 @@ export const followUpRepository = {
             priority: true,
           },
         },
+        activities: followUpActivityInclude,
       },
     });
   },

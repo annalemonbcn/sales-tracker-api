@@ -87,6 +87,17 @@ enum FollowUpStatus {
   cancelled
 }
 
+enum FollowUpType {
+  call
+  email
+  instagram_message
+  visit
+  meeting
+  proposal
+  dossier
+  other
+}
+
 model User {
   id     String   @id @default(uuid())
   name   String
@@ -144,6 +155,9 @@ model Activity {
   businessId String
   business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
 
+  followUpId String?
+  followUp   FollowUp? @relation(fields: [followUpId], references: [id], onDelete: SetNull)
+
   userId String
   user   User   @relation(fields: [userId], references: [id])
 
@@ -153,6 +167,9 @@ model Activity {
   metadata Json?
 
   createdAt DateTime @default(now())
+
+  // TODO: indexs?
+  @@index([followUpId, createdAt])
 }
 
 model FollowUp {
@@ -165,11 +182,15 @@ model FollowUp {
   assignedTo   User   @relation(fields: [assignedToId], references: [id])
 
   status FollowUpStatus @default(pending)
+  type   FollowUpType
 
+  title   String
   dueDate DateTime
   note    String?
 
   completedAt DateTime?
+
+  activities Activity[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

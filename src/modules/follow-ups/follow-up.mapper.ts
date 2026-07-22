@@ -4,6 +4,7 @@ import type {
   Prisma,
   User,
 } from '../../generated/prisma/client.js';
+import { toActivityDto, type ActivityDto } from '../activities/activity.mapper.js';
 
 type FollowUpWithAssignedUser = Prisma.FollowUpGetPayload<{
   include: {
@@ -39,6 +40,18 @@ type FollowUpWithAssignedUserAndBusiness = Prisma.FollowUpGetPayload<{
         priority: true;
       };
     };
+    activities: {
+      include: {
+        user: {
+          select: {
+            id: true;
+            name: true;
+            email: true;
+            role: true;
+          };
+        };
+      };
+    };
   };
 }>;
 
@@ -46,6 +59,8 @@ export type FollowUpDto = Pick<
   FollowUp,
   | 'id'
   | 'status'
+  | 'type'
+  | 'title'
   | 'dueDate'
   | 'note'
   | 'completedAt'
@@ -64,6 +79,8 @@ export type FollowUpTaskDto = Pick<
   FollowUp,
   | 'id'
   | 'status'
+  | 'type'
+  | 'title'
   | 'dueDate'
   | 'note'
   | 'completedAt'
@@ -72,6 +89,7 @@ export type FollowUpTaskDto = Pick<
 > & {
   assignedTo: FollowUpAssignedUserDto;
   business: FollowUpBusinessDto;
+  activities: ActivityDto[];
 };
 
 export const toFollowUpDto = (
@@ -79,6 +97,8 @@ export const toFollowUpDto = (
 ): FollowUpDto => ({
   id: followUp.id,
   status: followUp.status,
+  type: followUp.type,
+  title: followUp.title,
   dueDate: followUp.dueDate,
   note: followUp.note,
   completedAt: followUp.completedAt,
@@ -98,6 +118,8 @@ export const toFollowUpTaskDto = (
   return {
     id: followUp.id,
     status: followUp.status,
+    type: followUp.type,
+    title: followUp.title,
     dueDate: followUp.dueDate,
     note: followUp.note,
     completedAt: followUp.completedAt,
@@ -116,6 +138,8 @@ export const toFollowUpTaskDto = (
       status: followUp.business.status,
       priority: followUp.business.priority,
     },
+
+    activities: followUp.activities.map(toActivityDto),
 
     createdAt: followUp.createdAt,
     updatedAt: followUp.updatedAt,

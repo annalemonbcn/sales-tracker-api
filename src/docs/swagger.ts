@@ -557,6 +557,21 @@ const swaggerOptions: Options = {
           required: ['type', 'userId'],
         },
 
+        FollowUpType: {
+          type: 'string',
+          enum: [
+            'call',
+            'email',
+            'instagram_message',
+            'visit',
+            'meeting',
+            'proposal',
+            'dossier',
+            'other',
+          ],
+          example: 'call',
+        },
+
         FollowUpDto: {
           type: 'object',
           properties: {
@@ -569,6 +584,13 @@ const swaggerOptions: Options = {
               type: 'string',
               enum: ['pending', 'done', 'cancelled'],
               example: 'pending',
+            },
+            type: {
+              $ref: '#/components/schemas/FollowUpType',
+            },
+            title: {
+              type: 'string',
+              example: 'Call the business',
             },
             dueDate: {
               type: 'string',
@@ -604,6 +626,8 @@ const swaggerOptions: Options = {
           required: [
             'id',
             'status',
+            'type',
+            'title',
             'dueDate',
             'note',
             'completedAt',
@@ -626,16 +650,13 @@ const swaggerOptions: Options = {
               example: 'Bella Hair Studio',
             },
             category: {
-              type: 'string',
-              example: 'hairdresser',
+              $ref: '#/components/schemas/Category',
             },
             status: {
-              type: 'string',
-              example: 'waiting_response',
+              $ref: '#/components/schemas/BusinessStatus',
             },
             priority: {
-              type: 'string',
-              example: 'high',
+              $ref: '#/components/schemas/Priority',
             },
           },
           required: ['id', 'name', 'category', 'status', 'priority'],
@@ -653,6 +674,13 @@ const swaggerOptions: Options = {
               type: 'string',
               enum: ['pending', 'done', 'cancelled'],
               example: 'pending',
+            },
+            type: {
+              $ref: '#/components/schemas/FollowUpType',
+            },
+            title: {
+              type: 'string',
+              example: 'Call the business',
             },
             dueDate: {
               type: 'string',
@@ -677,6 +705,12 @@ const swaggerOptions: Options = {
             business: {
               $ref: '#/components/schemas/FollowUpBusinessDto',
             },
+            activities: {
+              type: 'array',
+              items: {
+                $ref: '#/components/schemas/ActivityDto',
+              },
+            },
             createdAt: {
               type: 'string',
               format: 'date-time',
@@ -691,11 +725,14 @@ const swaggerOptions: Options = {
           required: [
             'id',
             'status',
+            'type',
+            'title',
             'dueDate',
             'note',
             'completedAt',
             'assignedTo',
             'business',
+            'activities',
             'createdAt',
             'updatedAt',
           ],
@@ -704,6 +741,19 @@ const swaggerOptions: Options = {
         CreateFollowUpRequest: {
           type: 'object',
           properties: {
+            userId: {
+              type: 'string',
+              format: 'uuid',
+              description:
+                'Temporary actor ID until authentication is implemented.',
+            },
+            title: {
+              type: 'string',
+              example: 'Call the business',
+            },
+            type: {
+              $ref: '#/components/schemas/FollowUpType',
+            },
             assignedToId: {
               type: 'string',
               format: 'uuid',
@@ -720,12 +770,22 @@ const swaggerOptions: Options = {
                 'Call the business to check if they received the dossier.',
             },
           },
-          required: ['assignedToId', 'dueDate'],
+          required: ['userId', 'title', 'type', 'assignedToId', 'dueDate'],
         },
 
         UpdateFollowUpRequest: {
           type: 'object',
           properties: {
+            userId: {
+              type: 'string',
+              format: 'uuid',
+              description:
+                'Temporary actor ID until authentication is implemented.',
+            },
+            title: {
+              type: 'string',
+              example: 'Visit the business',
+            },
             assignedToId: {
               type: 'string',
               format: 'uuid',
@@ -741,8 +801,9 @@ const swaggerOptions: Options = {
               example: 'Visit the business in person.',
             },
           },
+          required: ['userId'],
           description:
-            'At least one field is required. Only assignedToId, dueDate and note can be updated from this endpoint.',
+            'userId identifies the actor temporarily. At least one of title, assignedToId, dueDate or note is also required.',
         },
 
         ErrorResponse: {

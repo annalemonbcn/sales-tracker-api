@@ -16,12 +16,14 @@ import {
 } from './follow-up.prisma-mapper.js';
 import { followUpRepository } from './follow-up.repository.js';
 import type {
+  CancelFollowUpInput,
   CancelFollowUpParams,
   CreateFollowUpInput,
   CreateFollowUpParams,
   GetBusinessFollowUpsParams,
   GetFollowUpsQuery,
   MarkFollowUpDoneParams,
+  MarkFollowUpDoneInput,
   UpdateFollowUpInput,
   UpdateFollowUpParams,
 } from './follow-up.schemas.js';
@@ -72,6 +74,19 @@ export const followUpService = {
         });
       }
 
+      const creatingUser = await followUpRepository.findUserById(
+        tx,
+        data.userId,
+      );
+
+      if (!creatingUser) {
+        throw new AppError({
+          statusCode: 404,
+          code: 'USER_NOT_FOUND',
+          message: 'User not found',
+        });
+      }
+
       const assignedUser = await followUpRepository.findUserById(
         tx,
         data.assignedToId,
@@ -94,7 +109,7 @@ export const followUpService = {
         tx,
         buildFollowUpCreatedActivityData({
           businessId: params.businessId,
-          userId: data.assignedToId,
+          userId: data.userId,
           followUpId: followUp.id,
           dueDate: followUp.dueDate,
         }),
@@ -117,7 +132,10 @@ export const followUpService = {
     });
   },
 
-  markFollowUpDone: async (params: MarkFollowUpDoneParams) => {
+  markFollowUpDone: async (
+    params: MarkFollowUpDoneParams,
+    data: MarkFollowUpDoneInput,
+  ) => {
     return prisma.$transaction(async (tx) => {
       const followUp = await followUpRepository.findById(tx, params.followUpId);
 
@@ -141,6 +159,19 @@ export const followUpService = {
         return followUp;
       }
 
+      const completingUser = await followUpRepository.findUserById(
+        tx,
+        data.userId,
+      );
+
+      if (!completingUser) {
+        throw new AppError({
+          statusCode: 404,
+          code: 'USER_NOT_FOUND',
+          message: 'User not found',
+        });
+      }
+
       const completedAt = new Date();
 
       const updatedFollowUp = await followUpRepository.updateFollowUp(
@@ -153,7 +184,7 @@ export const followUpService = {
         tx,
         buildFollowUpDoneActivityData({
           businessId: followUp.businessId,
-          userId: followUp.assignedToId,
+          userId: data.userId,
           followUpId: followUp.id,
           completedAt,
         }),
@@ -177,7 +208,10 @@ export const followUpService = {
     });
   },
 
-  cancelFollowUp: async (params: CancelFollowUpParams) => {
+  cancelFollowUp: async (
+    params: CancelFollowUpParams,
+    data: CancelFollowUpInput,
+  ) => {
     return prisma.$transaction(async (tx) => {
       const followUp = await followUpRepository.findById(tx, params.followUpId);
 
@@ -201,6 +235,19 @@ export const followUpService = {
         return followUp;
       }
 
+      const cancellingUser = await followUpRepository.findUserById(
+        tx,
+        data.userId,
+      );
+
+      if (!cancellingUser) {
+        throw new AppError({
+          statusCode: 404,
+          code: 'USER_NOT_FOUND',
+          message: 'User not found',
+        });
+      }
+
       const cancelledAt = new Date();
 
       const updatedFollowUp = await followUpRepository.updateFollowUp(
@@ -213,7 +260,7 @@ export const followUpService = {
         tx,
         buildFollowUpCancelledActivityData({
           businessId: followUp.businessId,
-          userId: followUp.assignedToId,
+          userId: data.userId,
           followUpId: followUp.id,
           cancelledAt,
         }),
@@ -268,6 +315,19 @@ export const followUpService = {
         });
       }
 
+      const updatingUser = await followUpRepository.findUserById(
+        tx,
+        data.userId,
+      );
+
+      if (!updatingUser) {
+        throw new AppError({
+          statusCode: 404,
+          code: 'USER_NOT_FOUND',
+          message: 'User not found',
+        });
+      }
+
       if (data.assignedToId !== undefined) {
         const assignedUser = await followUpRepository.findUserById(
           tx,
@@ -293,7 +353,7 @@ export const followUpService = {
         tx,
         buildFollowUpUpdatedActivityData({
           businessId: followUp.businessId,
-          userId: data.assignedToId ?? followUp.assignedToId,
+          userId: data.userId,
           followUpId: followUp.id,
           previousDueDate: followUp.dueDate,
           nextDueDate: updatedFollowUp.dueDate,

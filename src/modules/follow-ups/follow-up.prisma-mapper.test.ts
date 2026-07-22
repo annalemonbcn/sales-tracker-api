@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import {
   ActivityType,
   FollowUpStatus,
+  FollowUpType,
   Priority,
 } from '../../generated/prisma/enums.js';
 import {
@@ -29,6 +30,9 @@ describe('buildFollowUpCreateData', () => {
         businessId: 'business-id',
       },
       {
+        userId: 'creating-user-id',
+        title: 'Call the business',
+        type: FollowUpType.call,
         assignedToId: 'user-id',
         dueDate,
         note: 'Call the business.',
@@ -39,6 +43,8 @@ describe('buildFollowUpCreateData', () => {
       businessId: 'business-id',
       assignedToId: 'user-id',
       status: FollowUpStatus.pending,
+      type: FollowUpType.call,
+      title: 'Call the business',
       dueDate,
       note: 'Call the business.',
     });
@@ -52,6 +58,9 @@ describe('buildFollowUpCreateData', () => {
         businessId: 'business-id',
       },
       {
+        userId: 'creating-user-id',
+        title: 'Send email',
+        type: FollowUpType.email,
         assignedToId: 'user-id',
         dueDate,
       },
@@ -61,6 +70,8 @@ describe('buildFollowUpCreateData', () => {
       businessId: 'business-id',
       assignedToId: 'user-id',
       status: FollowUpStatus.pending,
+      type: FollowUpType.email,
+      title: 'Send email',
       dueDate,
       note: null,
     });
@@ -80,11 +91,11 @@ describe('buildFollowUpCreatedActivityData', () => {
 
     expect(result).toEqual({
       businessId: 'business-id',
+      followUpId: 'follow-up-id',
       userId: 'user-id',
       type: ActivityType.follow_up_created,
       notes: 'Follow-up created for 2026-07-05T10:00:00.000Z',
       metadata: {
-        followUpId: 'follow-up-id',
         dueDate: '2026-07-05T10:00:00.000Z',
       },
     });
@@ -167,11 +178,11 @@ describe('buildFollowUpDoneActivityData', () => {
 
     expect(result).toEqual({
       businessId: 'business-id',
+      followUpId: 'follow-up-id',
       userId: 'user-id',
       type: ActivityType.follow_up_done,
       notes: 'Follow-up completed at 2026-07-05T11:00:00.000Z',
       metadata: {
-        followUpId: 'follow-up-id',
         completedAt: '2026-07-05T11:00:00.000Z',
       },
     });
@@ -221,11 +232,11 @@ describe('buildFollowUpCancelledActivityData', () => {
 
     expect(result).toEqual({
       businessId: 'business-id',
+      followUpId: 'follow-up-id',
       userId: 'user-id',
       type: ActivityType.follow_up_cancelled,
       notes: 'Follow-up cancelled at 2026-07-05T11:00:00.000Z',
       metadata: {
-        followUpId: 'follow-up-id',
         cancelledAt: '2026-07-05T11:00:00.000Z',
       },
     });
@@ -233,6 +244,16 @@ describe('buildFollowUpCancelledActivityData', () => {
 });
 
 describe('buildFollowUpUpdateData', () => {
+  it('builds update data for title', () => {
+    const result = buildFollowUpUpdateData({
+      title: 'Visit the business',
+    });
+
+    expect(result).toEqual({
+      title: 'Visit the business',
+    });
+  });
+
   it('builds update data for dueDate', () => {
     const dueDate = new Date('2026-07-05T10:00:00.000Z');
 
@@ -273,6 +294,7 @@ describe('buildFollowUpUpdateData', () => {
     const dueDate = new Date('2026-07-05T10:00:00.000Z');
 
     const result = buildFollowUpUpdateData({
+      title: 'Visit the business',
       assignedToId: '660e8400-e29b-41d4-a716-446655440000',
       dueDate,
       note: 'Visit the business in person.',
@@ -284,6 +306,7 @@ describe('buildFollowUpUpdateData', () => {
           id: '660e8400-e29b-41d4-a716-446655440000',
         },
       },
+      title: 'Visit the business',
       dueDate,
       note: 'Visit the business in person.',
     });
@@ -314,12 +337,12 @@ describe('buildFollowUpUpdatedActivityData', () => {
 
     expect(result).toEqual({
       businessId: 'business-id',
+      followUpId: 'follow-up-id',
       userId: 'user-id',
       type: ActivityType.follow_up_updated,
       notes:
         'Follow-up updated from 2026-07-05T10:00:00.000Z to 2026-07-08T12:00:00.000Z',
       metadata: {
-        followUpId: 'follow-up-id',
         previousDueDate: '2026-07-05T10:00:00.000Z',
         nextDueDate: '2026-07-08T12:00:00.000Z',
       },
@@ -341,6 +364,16 @@ describe('buildFollowUpWhere', () => {
 
     expect(result).toEqual({
       status: FollowUpStatus.pending,
+    });
+  });
+
+  it('builds where with type filter', () => {
+    const result = buildFollowUpWhere({
+      type: FollowUpType.call,
+    });
+
+    expect(result).toEqual({
+      type: FollowUpType.call,
     });
   });
 
@@ -405,6 +438,7 @@ describe('buildFollowUpWhere', () => {
 
     const result = buildFollowUpWhere({
       status: FollowUpStatus.pending,
+      type: FollowUpType.call,
       assignedToId: '550e8400-e29b-41d4-a716-446655440000',
       businessId: '660e8400-e29b-41d4-a716-446655440000',
       priority: Priority.high,
@@ -414,6 +448,7 @@ describe('buildFollowUpWhere', () => {
 
     expect(result).toEqual({
       status: FollowUpStatus.pending,
+      type: FollowUpType.call,
       assignedToId: '550e8400-e29b-41d4-a716-446655440000',
       businessId: '660e8400-e29b-41d4-a716-446655440000',
       business: {
