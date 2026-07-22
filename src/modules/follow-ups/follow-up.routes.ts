@@ -178,6 +178,19 @@ followUpRouter.patch(
  *           type: string
  *           format: uuid
  *         description: Follow-up ID.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               userId:
+ *                 type: string
+ *                 format: uuid
+ *                 description: Temporary actor ID until authentication is implemented.
+ *             required:
+ *               - userId
  *     responses:
  *       200:
  *         description: Follow-up marked as done successfully
@@ -198,13 +211,13 @@ followUpRouter.patch(
  *                 - success
  *                 - data
  *       400:
- *         description: Invalid followUpId
+ *         description: Invalid followUpId or userId
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponse'
  *       404:
- *         description: Follow-up not found
+ *         description: Follow-up or user not found
  *         content:
  *           application/json:
  *             schema:
@@ -232,6 +245,19 @@ followUpRouter.patch(
  *           type: string
  *           format: uuid
  *         description: Follow-up ID.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               userId:
+ *                 type: string
+ *                 format: uuid
+ *                 description: Temporary actor ID until authentication is implemented.
+ *             required:
+ *               - userId
  *     responses:
  *       200:
  *         description: Follow-up cancelled successfully
@@ -252,13 +278,13 @@ followUpRouter.patch(
  *                 - success
  *                 - data
  *       400:
- *         description: Invalid followUpId
+ *         description: Invalid followUpId or userId
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponse'
  *       404:
- *         description: Follow-up not found
+ *         description: Follow-up or user not found
  *         content:
  *           application/json:
  *             schema:

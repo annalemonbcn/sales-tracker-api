@@ -21,6 +21,8 @@ export const createFollowUpSchema = z.object({
   }),
 
   body: z.object({
+    userId: z.uuid('Invalid userId'),
+
     title: z.string().trim().min(1, 'Follow-up title is required'),
 
     type: z.enum(FollowUpType),
@@ -45,21 +47,37 @@ export const markFollowUpDoneSchema = z.object({
   params: z.object({
     followUpId: z.uuid('Invalid followUpId'),
   }),
+
+  body: z.object({
+    userId: z.uuid('Invalid userId'),
+  }),
 });
 
 export type MarkFollowUpDoneParams = z.infer<
   typeof markFollowUpDoneSchema
 >['params'];
 
+export type MarkFollowUpDoneInput = z.infer<
+  typeof markFollowUpDoneSchema
+>['body'];
+
 export const cancelFollowUpSchema = z.object({
   params: z.object({
     followUpId: z.uuid('Invalid followUpId'),
+  }),
+
+  body: z.object({
+    userId: z.uuid('Invalid userId'),
   }),
 });
 
 export type CancelFollowUpParams = z.infer<
   typeof cancelFollowUpSchema
 >['params'];
+
+export type CancelFollowUpInput = z.infer<
+  typeof cancelFollowUpSchema
+>['body'];
 
 export const updateFollowUpSchema = z.object({
   params: z.object({
@@ -68,6 +86,8 @@ export const updateFollowUpSchema = z.object({
 
   body: z
     .object({
+      userId: z.uuid('Invalid userId'),
+
       title: z.string().trim().min(1, 'Follow-up title is required').optional(),
 
       assignedToId: z.uuid('Invalid assignedToId').optional(),
@@ -79,9 +99,16 @@ export const updateFollowUpSchema = z.object({
 
       note: z.string().trim().min(1, 'Follow-up note is required').optional(),
     })
-    .refine((body) => Object.keys(body).length > 0, {
+    .refine(
+      (body) =>
+        body.title !== undefined ||
+        body.assignedToId !== undefined ||
+        body.dueDate !== undefined ||
+        body.note !== undefined,
+      {
       message: 'At least one field is required',
-    }),
+      },
+    ),
 });
 
 export type UpdateFollowUpParams = z.infer<

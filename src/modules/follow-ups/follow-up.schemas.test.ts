@@ -36,12 +36,50 @@ describe('getBusinessFollowUpsSchema', () => {
 });
 
 describe('createFollowUpSchema', () => {
+  it('rejects an invalid creating userId', () => {
+    const result = createFollowUpSchema.safeParse({
+      params: {
+        businessId: '550e8400-e29b-41d4-a716-446655440000',
+      },
+      body: {
+        userId: 'not-a-uuid',
+        title: 'Call the business',
+        type: 'call',
+        assignedToId: '660e8400-e29b-41d4-a716-446655440000',
+        dueDate: '2026-07-05T10:00:00.000Z',
+      },
+    });
+
+    expect(result.success).toBe(false);
+
+    if (!result.success) {
+      expect(result.error.issues[0]?.message).toBe('Invalid userId');
+    }
+  });
+
+  it('rejects a missing creating userId', () => {
+    const result = createFollowUpSchema.safeParse({
+      params: {
+        businessId: '550e8400-e29b-41d4-a716-446655440000',
+      },
+      body: {
+        title: 'Call the business',
+        type: 'call',
+        assignedToId: '660e8400-e29b-41d4-a716-446655440000',
+        dueDate: '2026-07-05T10:00:00.000Z',
+      },
+    });
+
+    expect(result.success).toBe(false);
+  });
+
   it('accepts a valid follow-up creation payload', () => {
     const result = createFollowUpSchema.safeParse({
       params: {
         businessId: '550e8400-e29b-41d4-a716-446655440000',
       },
       body: {
+        userId: '550e8400-e29b-41d4-a716-446655440000',
         title: 'Call the business',
         type: 'call',
         assignedToId: '660e8400-e29b-41d4-a716-446655440000',
@@ -66,6 +104,7 @@ describe('createFollowUpSchema', () => {
         businessId: '550e8400-e29b-41d4-a716-446655440000',
       },
       body: {
+        userId: '550e8400-e29b-41d4-a716-446655440000',
         title: 'Send email',
         type: 'email',
         assignedToId: '660e8400-e29b-41d4-a716-446655440000',
@@ -82,6 +121,7 @@ describe('createFollowUpSchema', () => {
         businessId: 'not-a-uuid',
       },
       body: {
+        userId: '550e8400-e29b-41d4-a716-446655440000',
         title: 'Call the business',
         type: 'call',
         assignedToId: '660e8400-e29b-41d4-a716-446655440000',
@@ -102,6 +142,7 @@ describe('createFollowUpSchema', () => {
         businessId: '550e8400-e29b-41d4-a716-446655440000',
       },
       body: {
+        userId: '550e8400-e29b-41d4-a716-446655440000',
         title: 'Call the business',
         type: 'call',
         assignedToId: 'not-a-uuid',
@@ -122,6 +163,7 @@ describe('createFollowUpSchema', () => {
         businessId: '550e8400-e29b-41d4-a716-446655440000',
       },
       body: {
+        userId: '550e8400-e29b-41d4-a716-446655440000',
         title: 'Call the business',
         type: 'call',
         assignedToId: '660e8400-e29b-41d4-a716-446655440000',
@@ -142,6 +184,7 @@ describe('createFollowUpSchema', () => {
         businessId: '550e8400-e29b-41d4-a716-446655440000',
       },
       body: {
+        userId: '550e8400-e29b-41d4-a716-446655440000',
         title: 'Call the business',
         type: 'call',
         assignedToId: '660e8400-e29b-41d4-a716-446655440000',
@@ -165,6 +208,7 @@ describe('createFollowUpSchema', () => {
         businessId: '550e8400-e29b-41d4-a716-446655440000',
       },
       body: {
+        userId: '550e8400-e29b-41d4-a716-446655440000',
         title: '  Call the business  ',
         type: 'call',
         assignedToId: '660e8400-e29b-41d4-a716-446655440000',
@@ -187,6 +231,7 @@ describe('createFollowUpSchema', () => {
         businessId: '550e8400-e29b-41d4-a716-446655440000',
       },
       body: {
+        userId: '550e8400-e29b-41d4-a716-446655440000',
         title: '   ',
         type: 'call',
         assignedToId: '660e8400-e29b-41d4-a716-446655440000',
@@ -209,6 +254,7 @@ describe('createFollowUpSchema', () => {
         businessId: '550e8400-e29b-41d4-a716-446655440000',
       },
       body: {
+        userId: '550e8400-e29b-41d4-a716-446655440000',
         title: 'Call the business',
         assignedToId: '660e8400-e29b-41d4-a716-446655440000',
         dueDate: '2026-07-05T10:00:00.000Z',
@@ -224,6 +270,7 @@ describe('createFollowUpSchema', () => {
         businessId: '550e8400-e29b-41d4-a716-446655440000',
       },
       body: {
+        userId: '550e8400-e29b-41d4-a716-446655440000',
         title: 'Call the business',
         type: 'sms',
         assignedToId: '660e8400-e29b-41d4-a716-446655440000',
@@ -236,10 +283,13 @@ describe('createFollowUpSchema', () => {
 });
 
 describe('markFollowUpDoneSchema', () => {
-  it('accepts a valid followUpId param', () => {
+  it('accepts valid followUpId and userId', () => {
     const result = markFollowUpDoneSchema.safeParse({
       params: {
         followUpId: '550e8400-e29b-41d4-a716-446655440000',
+      },
+      body: {
+        userId: '660e8400-e29b-41d4-a716-446655440000',
       },
     });
 
@@ -262,10 +312,13 @@ describe('markFollowUpDoneSchema', () => {
 });
 
 describe('cancelFollowUpSchema', () => {
-  it('accepts a valid followUpId param', () => {
+  it('accepts valid followUpId and userId', () => {
     const result = cancelFollowUpSchema.safeParse({
       params: {
         followUpId: '550e8400-e29b-41d4-a716-446655440000',
+      },
+      body: {
+        userId: '660e8400-e29b-41d4-a716-446655440000',
       },
     });
 
@@ -276,6 +329,12 @@ describe('cancelFollowUpSchema', () => {
     const result = cancelFollowUpSchema.safeParse({
       params: {
         followUpId: 'not-a-uuid',
+      },
+      body: {
+        userId: '660e8400-e29b-41d4-a716-446655440000',
+      },
+      body: {
+        userId: '660e8400-e29b-41d4-a716-446655440000',
       },
     });
 
@@ -288,12 +347,44 @@ describe('cancelFollowUpSchema', () => {
 });
 
 describe('updateFollowUpSchema', () => {
+  it('rejects an invalid updating userId', () => {
+    const result = updateFollowUpSchema.safeParse({
+      params: {
+        followUpId: '550e8400-e29b-41d4-a716-446655440000',
+      },
+      body: {
+        userId: 'not-a-uuid',
+        title: 'Visit the business',
+      },
+    });
+
+    expect(result.success).toBe(false);
+
+    if (!result.success) {
+      expect(result.error.issues[0]?.message).toBe('Invalid userId');
+    }
+  });
+
+  it('rejects a missing updating userId', () => {
+    const result = updateFollowUpSchema.safeParse({
+      params: {
+        followUpId: '550e8400-e29b-41d4-a716-446655440000',
+      },
+      body: {
+        title: 'Visit the business',
+      },
+    });
+
+    expect(result.success).toBe(false);
+  });
+
   it('accepts a valid title update', () => {
     const result = updateFollowUpSchema.safeParse({
       params: {
         followUpId: '550e8400-e29b-41d4-a716-446655440000',
       },
       body: {
+        userId: '660e8400-e29b-41d4-a716-446655440000',
         title: 'Visit the business',
       },
     });
@@ -311,6 +402,7 @@ describe('updateFollowUpSchema', () => {
         followUpId: '550e8400-e29b-41d4-a716-446655440000',
       },
       body: {
+        userId: '660e8400-e29b-41d4-a716-446655440000',
         dueDate: '2026-07-05T10:00:00.000Z',
       },
     });
@@ -328,6 +420,7 @@ describe('updateFollowUpSchema', () => {
         followUpId: '550e8400-e29b-41d4-a716-446655440000',
       },
       body: {
+        userId: '550e8400-e29b-41d4-a716-446655440000',
         assignedToId: '660e8400-e29b-41d4-a716-446655440000',
       },
     });
@@ -341,6 +434,7 @@ describe('updateFollowUpSchema', () => {
         followUpId: '550e8400-e29b-41d4-a716-446655440000',
       },
       body: {
+        userId: '660e8400-e29b-41d4-a716-446655440000',
         note: 'Call the business next week.',
       },
     });
@@ -358,6 +452,7 @@ describe('updateFollowUpSchema', () => {
         followUpId: '550e8400-e29b-41d4-a716-446655440000',
       },
       body: {
+        userId: '660e8400-e29b-41d4-a716-446655440000',
         note: '  Call the business next week.  ',
       },
     });
@@ -375,6 +470,7 @@ describe('updateFollowUpSchema', () => {
         followUpId: '550e8400-e29b-41d4-a716-446655440000',
       },
       body: {
+        userId: '550e8400-e29b-41d4-a716-446655440000',
         title: '  Visit the business  ',
         assignedToId: '660e8400-e29b-41d4-a716-446655440000',
         dueDate: '2026-07-05T10:00:00.000Z',
@@ -395,7 +491,9 @@ describe('updateFollowUpSchema', () => {
       params: {
         followUpId: '550e8400-e29b-41d4-a716-446655440000',
       },
-      body: {},
+      body: {
+        userId: '660e8400-e29b-41d4-a716-446655440000',
+      },
     });
 
     expect(result.success).toBe(false);
@@ -430,6 +528,7 @@ describe('updateFollowUpSchema', () => {
         followUpId: '550e8400-e29b-41d4-a716-446655440000',
       },
       body: {
+        userId: '660e8400-e29b-41d4-a716-446655440000',
         assignedToId: 'not-a-uuid',
       },
     });
@@ -447,6 +546,7 @@ describe('updateFollowUpSchema', () => {
         followUpId: '550e8400-e29b-41d4-a716-446655440000',
       },
       body: {
+        userId: '660e8400-e29b-41d4-a716-446655440000',
         dueDate: 'not-a-date',
       },
     });
@@ -464,6 +564,7 @@ describe('updateFollowUpSchema', () => {
         followUpId: '550e8400-e29b-41d4-a716-446655440000',
       },
       body: {
+        userId: '660e8400-e29b-41d4-a716-446655440000',
         note: '',
       },
     });
@@ -483,6 +584,7 @@ describe('updateFollowUpSchema', () => {
         followUpId: '550e8400-e29b-41d4-a716-446655440000',
       },
       body: {
+        userId: '660e8400-e29b-41d4-a716-446655440000',
         title: '',
       },
     });
@@ -494,6 +596,62 @@ describe('updateFollowUpSchema', () => {
         'Follow-up title is required',
       );
     }
+  });
+
+  it('rejects an invalid userId', () => {
+    const result = cancelFollowUpSchema.safeParse({
+      params: {
+        followUpId: '550e8400-e29b-41d4-a716-446655440000',
+      },
+      body: {
+        userId: 'not-a-uuid',
+      },
+    });
+
+    expect(result.success).toBe(false);
+
+    if (!result.success) {
+      expect(result.error.issues[0]?.message).toBe('Invalid userId');
+    }
+  });
+
+  it('rejects a missing userId', () => {
+    const result = cancelFollowUpSchema.safeParse({
+      params: {
+        followUpId: '550e8400-e29b-41d4-a716-446655440000',
+      },
+      body: {},
+    });
+
+    expect(result.success).toBe(false);
+  });
+
+  it('rejects an invalid userId', () => {
+    const result = markFollowUpDoneSchema.safeParse({
+      params: {
+        followUpId: '550e8400-e29b-41d4-a716-446655440000',
+      },
+      body: {
+        userId: 'not-a-uuid',
+      },
+    });
+
+    expect(result.success).toBe(false);
+
+    if (!result.success) {
+      expect(result.error.issues[0]?.message).toBe('Invalid userId');
+    }
+  });
+
+  it('rejects a missing userId', () => {
+    const result = markFollowUpDoneSchema.safeParse({
+      params: {
+        followUpId: '550e8400-e29b-41d4-a716-446655440000',
+      },
+      body: {},
+    });
+
+    expect(result.success).toBe(false);
   });
 });
 

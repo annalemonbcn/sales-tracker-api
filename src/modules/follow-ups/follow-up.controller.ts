@@ -5,11 +5,13 @@ import { followUpService } from './follow-up.service.js';
 import { toFollowUpDto, toFollowUpTaskDto } from './follow-up.mapper.js';
 import type {
   CancelFollowUpParams,
+  CancelFollowUpInput,
   CreateFollowUpInput,
   CreateFollowUpParams,
   GetBusinessFollowUpsParams,
   GetFollowUpsQuery,
   MarkFollowUpDoneParams,
+  MarkFollowUpDoneInput,
   UpdateFollowUpInput,
   UpdateFollowUpParams,
 } from './follow-up.schemas.js';
@@ -61,11 +63,12 @@ export const createFollowUp: RequestHandler = async (req, res, next) => {
   }
 };
 
-export const markFollowUpDone: RequestHandler = async (_req, res, next) => {
+export const markFollowUpDone: RequestHandler = async (req, res, next) => {
   try {
     const params = res.locals.validated.params as MarkFollowUpDoneParams;
+    const data = req.body as MarkFollowUpDoneInput;
 
-    const followUp = await followUpService.markFollowUpDone(params);
+    const followUp = await followUpService.markFollowUpDone(params, data);
 
     return sendSuccess(res, {
       followUp: toFollowUpDto(followUp),
@@ -75,11 +78,12 @@ export const markFollowUpDone: RequestHandler = async (_req, res, next) => {
   }
 };
 
-export const cancelFollowUp: RequestHandler = async (_req, res, next) => {
+export const cancelFollowUp: RequestHandler = async (req, res, next) => {
   try {
     const params = res.locals.validated.params as CancelFollowUpParams;
+    const data = req.body as CancelFollowUpInput;
 
-    const followUp = await followUpService.cancelFollowUp(params);
+    const followUp = await followUpService.cancelFollowUp(params, data);
 
     return sendSuccess(res, {
       followUp: toFollowUpDto(followUp),

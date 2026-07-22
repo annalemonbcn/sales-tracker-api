@@ -118,7 +118,7 @@ businessFollowUpRouter.get(
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponse'
  *       404:
- *         description: Business or assigned user not found
+ *         description: Business, creating user or assigned user not found
  *         content:
  *           application/json:
  *             schema:

@@ -741,6 +741,12 @@ const swaggerOptions: Options = {
         CreateFollowUpRequest: {
           type: 'object',
           properties: {
+            userId: {
+              type: 'string',
+              format: 'uuid',
+              description:
+                'Temporary actor ID until authentication is implemented.',
+            },
             title: {
               type: 'string',
               example: 'Call the business',
@@ -764,12 +770,18 @@ const swaggerOptions: Options = {
                 'Call the business to check if they received the dossier.',
             },
           },
-          required: ['title', 'type', 'assignedToId', 'dueDate'],
+          required: ['userId', 'title', 'type', 'assignedToId', 'dueDate'],
         },
 
         UpdateFollowUpRequest: {
           type: 'object',
           properties: {
+            userId: {
+              type: 'string',
+              format: 'uuid',
+              description:
+                'Temporary actor ID until authentication is implemented.',
+            },
             title: {
               type: 'string',
               example: 'Visit the business',
@@ -789,8 +801,9 @@ const swaggerOptions: Options = {
               example: 'Visit the business in person.',
             },
           },
+          required: ['userId'],
           description:
-            'At least one field is required. Only title, assignedToId, dueDate and note can be updated from this endpoint.',
+            'userId identifies the actor temporarily. At least one of title, assignedToId, dueDate or note is also required.',
         },
 
         ErrorResponse: {

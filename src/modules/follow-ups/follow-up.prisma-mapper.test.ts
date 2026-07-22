@@ -30,6 +30,7 @@ describe('buildFollowUpCreateData', () => {
         businessId: 'business-id',
       },
       {
+        userId: 'creating-user-id',
         title: 'Call the business',
         type: FollowUpType.call,
         assignedToId: 'user-id',
@@ -57,6 +58,7 @@ describe('buildFollowUpCreateData', () => {
         businessId: 'business-id',
       },
       {
+        userId: 'creating-user-id',
         title: 'Send email',
         type: FollowUpType.email,
         assignedToId: 'user-id',
