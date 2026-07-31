@@ -119,7 +119,7 @@ export const buildFollowUpCancelledActivityData = (params: {
 };
 
 export const buildFollowUpUpdateData = (
-  data: UpdateFollowUpInput,
+  data: Omit<UpdateFollowUpInput, 'userId'>,
 ): Prisma.FollowUpUpdateInput => {
   return {
     ...(data.assignedToId !== undefined
