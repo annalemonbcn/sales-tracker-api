@@ -1,0 +1,28 @@
+type: object
+properties:
+  userId:
+    type: string
+    format: uuid
+    description: Temporary actor ID until authentication is implemented.
+  title:
+    type: string
+    example: Call the business
+  type:
+    $ref: ./FollowUpType.yml
+  assignedToId:
+    type: string
+    format: uuid
+    example: 550e8400-e29b-41d4-a716-446655440000
+  dueDate:
+    type: string
+    format: date-time
+    example: 2026-07-05T10:00:00.000Z
+  note:
+    type: string
+    example: Call the business to check if they received the dossier.
+required:
+  - userId
+  - title
+  - type
+  - assignedToId
+  - dueDate

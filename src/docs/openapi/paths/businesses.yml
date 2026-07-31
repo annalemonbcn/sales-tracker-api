@@ -1,0 +1,113 @@
+get:
+  operationId: getBusinesses
+  summary: Get businesses
+  description: Returns businesses with optional filters.
+  tags:
+    - Businesses
+  parameters:
+    - in: query
+      name: status
+      schema:
+        type: string
+      description: Filter by business status.
+      example: waiting_response
+    - in: query
+      name: category
+      schema:
+        type: string
+      description: Filter by business category.
+      example: hairdresser
+    - in: query
+      name: priority
+      schema:
+        type: string
+      description: Filter by business priority.
+      example: high
+    - in: query
+      name: source
+      schema:
+        type: string
+      description: Filter by lead source.
+      example: instagram
+    - in: query
+      name: assignedToId
+      schema:
+        oneOf:
+          - type: string
+            format: uuid
+          - type: string
+            enum:
+              - unassigned
+      description: Filter by assigned user id or use "unassigned" to return businesses without assigned user.
+    - in: query
+      name: search
+      schema:
+        type: string
+      description: Search by business name, instagram, email, phone or address.
+      example: Bella
+  responses:
+    "200":
+      description: Businesses returned successfully
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: true
+              data:
+                type: object
+                properties:
+                  businesses:
+                    type: array
+                    items:
+                      $ref: ../components/schemas/BusinessDto.yml
+            required:
+              - success
+              - data
+    "400":
+      description: Invalid query params
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas/ErrorResponse.yml
+post:
+  summary: Create business
+  description: Creates a new business and automatically creates business_created activity. If assignedToId is provided, the business starts as assigned and business_assigned activity is also created.
+  tags:
+    - Businesses
+  requestBody:
+    $ref: ../components/requestBodies/CreateBusiness.yml
+  responses:
+    "201":
+      description: Business created successfully
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: true
+              data:
+                type: object
+                properties:
+                  business:
+                    $ref: ../components/schemas/BusinessDto.yml
+            required:
+              - success
+              - data
+    "400":
+      description: Invalid request body
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas/ErrorResponse.yml
+    "404":
+      description: Created by user or assigned user not found
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas/ErrorResponse.yml
+  operationId: createBusiness

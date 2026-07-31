@@ -1,0 +1,10 @@
+extends:
+  - recommended
+
+rules:
+  # This is an internal API and does not currently publish licensing metadata.
+  info-license: off
+  # The documented server intentionally points to the local development API.
+  no-server-example.com: off
+  # Read-only endpoints do not necessarily have a meaningful 4xx response yet.
+  operation-4xx-response: off

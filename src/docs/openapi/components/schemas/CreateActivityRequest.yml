@@ -1,0 +1,33 @@
+type: object
+properties:
+  type:
+    type: string
+    enum:
+      - instagram_message_sent
+      - email_sent
+      - phone_call_done
+      - visit_done
+      - response_received
+      - dossier_sent
+      - meeting_scheduled
+      - meeting_done
+      - proposal_sent
+      - note_added
+    example: instagram_message_sent
+    description: Manual activity type. System activity types such as business_created, status_changed or priority_changed are not allowed here.
+  userId:
+    type: string
+    format: uuid
+    example: 550e8400-e29b-41d4-a716-446655440000
+    description: Temporary field until auth is implemented. Later this will come from req.user.id.
+  notes:
+    type: string
+    example: Le he escrito por Instagram preguntando si quiere recibir el dossier.
+  metadata:
+    type: object
+    additionalProperties: true
+    example:
+      channel: instagram
+required:
+  - type
+  - userId

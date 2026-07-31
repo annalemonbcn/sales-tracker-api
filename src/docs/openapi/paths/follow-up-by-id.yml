@@ -1,0 +1,41 @@
+patch:
+  summary: Update follow-up
+  description: Updates a follow-up task. Only title, assignedToId, dueDate and note can be updated. Updating dueDate creates a follow_up_updated activity and may recalculate business.nextFollowUpAt.
+  tags:
+    - Follow-ups
+  parameters:
+    - $ref: ../components/parameters/FollowUpId.yml
+  requestBody:
+    $ref: ../components/requestBodies/UpdateFollowUp.yml
+  responses:
+    "200":
+      description: Follow-up updated successfully
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: true
+              data:
+                type: object
+                properties:
+                  followUp:
+                    $ref: ../components/schemas/FollowUpDto.yml
+            required:
+              - success
+              - data
+    "400":
+      description: Invalid request params or body
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas/ErrorResponse.yml
+    "404":
+      description: Follow-up or assigned user not found
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas/ErrorResponse.yml
+  operationId: updateFollowUp

@@ -1,0 +1,11 @@
+type: string
+enum:
+  - restaurant
+  - hairdresser
+  - beauty_center
+  - hotel
+  - shop
+  - gym
+  - clinic
+  - other
+example: hairdresser

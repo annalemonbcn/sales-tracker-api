@@ -1,0 +1,96 @@
+openapi: 3.0.0
+info:
+  title: Sales Tracker API
+  version: 1.0.0
+  description: API documentation for the Sales Tracker backend
+servers:
+  - url: http://localhost:3000
+    description: Local development server
+tags:
+  - name: Users
+    description: User management endpoints
+  - name: Businesses
+    description: Business management endpoints
+  - name: Activities
+    description: Business activity timeline endpoints
+  - name: Follow-ups
+    description: Follow-up and task management endpoints
+  - name: Dashboard
+    description: Dashboard summary endpoints
+security: []
+paths:
+  /users:
+    $ref: ./paths/users.yml
+  /businesses/{businessId}/follow-ups:
+    $ref: ./paths/business-follow-ups.yml
+  /follow-ups:
+    $ref: ./paths/follow-ups.yml
+  /follow-ups/{followUpId}:
+    $ref: ./paths/follow-up-by-id.yml
+  /follow-ups/{followUpId}/done:
+    $ref: ./paths/follow-up-done.yml
+  /follow-ups/{followUpId}/cancel:
+    $ref: ./paths/follow-up-cancel.yml
+  /dashboard/summary:
+    $ref: ./paths/dashboard-summary.yml
+  /businesses:
+    $ref: ./paths/businesses.yml
+  /businesses/{businessId}:
+    $ref: ./paths/business-by-id.yml
+  /businesses/{businessId}/activities:
+    $ref: ./paths/business-activities.yml
+components:
+  schemas:
+    DashboardMetricTrendVariant:
+      $ref: ./components/schemas/DashboardMetricTrendVariant.yml
+    DashboardMetric:
+      $ref: ./components/schemas/DashboardMetric.yml
+    UserSummaryDto:
+      $ref: ./components/schemas/UserSummaryDto.yml
+    UserRole:
+      $ref: ./components/schemas/UserRole.yml
+    UserDto:
+      $ref: ./components/schemas/UserDto.yml
+    BusinessContactDetailsDto:
+      $ref: ./components/schemas/BusinessContactDetailsDto.yml
+    BusinessStatus:
+      $ref: ./components/schemas/BusinessStatus.yml
+    Category:
+      $ref: ./components/schemas/Category.yml
+    Priority:
+      $ref: ./components/schemas/Priority.yml
+    LeadSource:
+      $ref: ./components/schemas/LeadSource.yml
+    BusinessDto:
+      $ref: ./components/schemas/BusinessDto.yml
+    BusinessDetailDto:
+      $ref: ./components/schemas/BusinessDetailDto.yml
+    CreateBusinessRequest:
+      $ref: ./components/schemas/CreateBusinessRequest.yml
+    UpdateBusinessRequest:
+      $ref: ./components/schemas/UpdateBusinessRequest.yml
+    ActivityType:
+      $ref: ./components/schemas/ActivityType.yml
+    ActivityDto:
+      $ref: ./components/schemas/ActivityDto.yml
+    CreateActivityRequest:
+      $ref: ./components/schemas/CreateActivityRequest.yml
+    FollowUpType:
+      $ref: ./components/schemas/FollowUpType.yml
+    FollowUpDto:
+      $ref: ./components/schemas/FollowUpDto.yml
+    FollowUpBusinessDto:
+      $ref: ./components/schemas/FollowUpBusinessDto.yml
+    FollowUpTaskDto:
+      $ref: ./components/schemas/FollowUpTaskDto.yml
+    CreateFollowUpRequest:
+      $ref: ./components/schemas/CreateFollowUpRequest.yml
+    UpdateFollowUpRequest:
+      $ref: ./components/schemas/UpdateFollowUpRequest.yml
+    ErrorResponse:
+      $ref: ./components/schemas/ErrorResponse.yml
+  parameters:
+    BusinessId:
+      $ref: ./components/parameters/BusinessId.yml
+    FollowUpId:
+      $ref: ./components/parameters/FollowUpId.yml

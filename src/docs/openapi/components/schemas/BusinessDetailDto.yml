@@ -1,0 +1,10 @@
+allOf:
+  - $ref: ./BusinessDto.yml
+  - type: object
+    properties:
+      activities:
+        type: array
+        items:
+          $ref: ./ActivityDto.yml
+    required:
+      - activities

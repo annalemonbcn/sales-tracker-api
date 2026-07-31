@@ -1,0 +1,41 @@
+patch:
+  summary: Mark follow-up as done
+  description: Marks a follow-up as done, sets completedAt, creates a follow_up_done activity and recalculates business.nextFollowUpAt.
+  tags:
+    - Follow-ups
+  parameters:
+    - $ref: ../components/parameters/FollowUpId.yml
+  requestBody:
+    $ref: ../components/requestBodies/MarkFollowUpDone.yml
+  responses:
+    "200":
+      description: Follow-up marked as done successfully
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: true
+              data:
+                type: object
+                properties:
+                  followUp:
+                    $ref: ../components/schemas/FollowUpDto.yml
+            required:
+              - success
+              - data
+    "400":
+      description: Invalid followUpId or userId
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas/ErrorResponse.yml
+    "404":
+      description: Follow-up or user not found
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas/ErrorResponse.yml
+  operationId: markFollowUpDone

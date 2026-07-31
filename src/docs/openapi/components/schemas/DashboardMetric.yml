@@ -1,0 +1,14 @@
+type: object
+properties:
+  value:
+    type: number
+    example: 148
+  currentMonth:
+    type: number
+    example: 12
+  trendVariant:
+    $ref: ./DashboardMetricTrendVariant.yml
+required:
+  - value
+  - currentMonth
+  - trendVariant

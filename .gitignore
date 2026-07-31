@@ -4,6 +4,7 @@ node_modules/
 # Generated files
 /src/generated/prisma
 /dist/
+/src/docs/openapi.bundle.json
 
 # Environment variables
 .env

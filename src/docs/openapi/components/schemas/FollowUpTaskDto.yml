@@ -1,0 +1,60 @@
+type: object
+properties:
+  id:
+    type: string
+    format: uuid
+    example: 770e8400-e29b-41d4-a716-446655440000
+  status:
+    type: string
+    enum:
+      - pending
+      - done
+      - cancelled
+    example: pending
+  type:
+    $ref: ./FollowUpType.yml
+  title:
+    type: string
+    example: Call the business
+  dueDate:
+    type: string
+    format: date-time
+    example: 2026-07-05T10:00:00.000Z
+  note:
+    type: string
+    nullable: true
+    example: Call the business to check if they received the dossier.
+  completedAt:
+    type: string
+    format: date-time
+    nullable: true
+    example: null
+  assignedTo:
+    $ref: ./UserSummaryDto.yml
+  business:
+    $ref: ./FollowUpBusinessDto.yml
+  activities:
+    type: array
+    items:
+      $ref: ./ActivityDto.yml
+  createdAt:
+    type: string
+    format: date-time
+    example: 2026-06-25T10:00:00.000Z
+  updatedAt:
+    type: string
+    format: date-time
+    example: 2026-06-25T10:30:00.000Z
+required:
+  - id
+  - status
+  - type
+  - title
+  - dueDate
+  - note
+  - completedAt
+  - assignedTo
+  - business
+  - activities
+  - createdAt
+  - updatedAt
