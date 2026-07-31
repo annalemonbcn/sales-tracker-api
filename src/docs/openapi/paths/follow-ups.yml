@@ -1,0 +1,95 @@
+get:
+  summary: Get follow-ups
+  description: Returns global follow-ups with optional filters. This endpoint is used by the Tasks view.
+  tags:
+    - Follow-ups
+  parameters:
+    - in: query
+      name: status
+      schema:
+        type: string
+        enum:
+          - pending
+          - done
+          - cancelled
+      description: Filter by follow-up status.
+      example: pending
+    - in: query
+      name: type
+      schema:
+        type: string
+        enum:
+          - call
+          - email
+          - instagram_message
+          - visit
+          - meeting
+          - proposal
+          - dossier
+          - other
+      description: Filter by follow-up type.
+      example: call
+    - in: query
+      name: assignedToId
+      schema:
+        type: string
+        format: uuid
+      description: Filter by assigned user.
+    - in: query
+      name: businessId
+      schema:
+        type: string
+        format: uuid
+      description: Filter by linked business.
+    - in: query
+      name: priority
+      schema:
+        type: string
+        enum:
+          - low
+          - medium
+          - high
+      description: Filter by linked business priority.
+      example: high
+    - in: query
+      name: dueBefore
+      schema:
+        type: string
+        format: date-time
+      description: Filter follow-ups due before or at this date.
+      example: 2026-07-10T00:00:00.000Z
+    - in: query
+      name: dueAfter
+      schema:
+        type: string
+        format: date-time
+      description: Filter follow-ups due after or at this date.
+      example: 2026-07-01T00:00:00.000Z
+  responses:
+    "200":
+      description: Follow-ups returned successfully
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: true
+              data:
+                type: object
+                properties:
+                  followUps:
+                    type: array
+                    items:
+                      $ref: ../components/schemas/FollowUpTaskDto.yml
+            required:
+              - success
+              - data
+    "400":
+      description: Invalid query params
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas/ErrorResponse.yml
+  operationId: getFollowUps

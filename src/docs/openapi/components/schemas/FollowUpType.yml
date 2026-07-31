@@ -1,0 +1,11 @@
+type: string
+enum:
+  - call
+  - email
+  - instagram_message
+  - visit
+  - meeting
+  - proposal
+  - dossier
+  - other
+example: call

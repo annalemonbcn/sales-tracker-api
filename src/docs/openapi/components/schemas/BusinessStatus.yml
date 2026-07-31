@@ -1,0 +1,16 @@
+type: string
+enum:
+  - new_lead
+  - assigned
+  - waiting_response
+  - interested
+  - dossier_sent
+  - meeting_scheduled
+  - meeting_done
+  - proposal_sent
+  - negotiating
+  - won
+  - lost
+  - recontact_later
+  - discarded
+example: waiting_response

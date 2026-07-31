@@ -1,0 +1,31 @@
+type: object
+properties:
+  id:
+    type: string
+    format: uuid
+    example: 770e8400-e29b-41d4-a716-446655440000
+  type:
+    $ref: ./ActivityType.yml
+  notes:
+    type: string
+    nullable: true
+    example: Le he escrito por Instagram preguntando si quiere recibir el dossier.
+  metadata:
+    type: object
+    nullable: true
+    additionalProperties: true
+    example:
+      channel: instagram
+  user:
+    $ref: ./UserSummaryDto.yml
+  createdAt:
+    type: string
+    format: date-time
+    example: 2026-06-25T10:00:00.000Z
+required:
+  - id
+  - type
+  - notes
+  - metadata
+  - user
+  - createdAt

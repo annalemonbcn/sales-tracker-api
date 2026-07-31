@@ -1,0 +1,82 @@
+get:
+  summary: Get business by ID
+  description: Returns a single business by its ID.
+  tags:
+    - Businesses
+  parameters:
+    - $ref: ../components/parameters/BusinessId.yml
+  responses:
+    "200":
+      description: Business returned successfully
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: true
+              data:
+                type: object
+                properties:
+                  business:
+                    $ref: ../components/schemas/BusinessDetailDto.yml
+                required:
+                  - business
+            required:
+              - success
+              - data
+    "400":
+      description: Invalid businessId
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas/ErrorResponse.yml
+    "404":
+      description: Business not found
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas/ErrorResponse.yml
+  operationId: getBusiness
+patch:
+  summary: Update business
+  description: Updates a business. If status changes, a status_changed activity is created. If priority changes, a priority_changed activity is created. If assignedToId changes, a business_assigned activity is created.
+  tags:
+    - Businesses
+  parameters:
+    - $ref: ../components/parameters/BusinessId.yml
+  requestBody:
+    $ref: ../components/requestBodies/UpdateBusiness.yml
+  responses:
+    "200":
+      description: Business updated successfully
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: true
+              data:
+                type: object
+                properties:
+                  business:
+                    $ref: ../components/schemas/BusinessDetailDto.yml
+            required:
+              - success
+              - data
+    "400":
+      description: Invalid request params or body
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas/ErrorResponse.yml
+    "404":
+      description: Business or assigned user not found
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas/ErrorResponse.yml
+  operationId: updateBusiness

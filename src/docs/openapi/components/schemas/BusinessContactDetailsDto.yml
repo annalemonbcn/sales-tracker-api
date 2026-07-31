@@ -1,0 +1,30 @@
+type: object
+properties:
+  instagram:
+    type: string
+    nullable: true
+    example: "@bella_hair_studio"
+  email:
+    type: string
+    nullable: true
+    format: email
+    example: hello@bellahair.com
+  phone:
+    type: string
+    nullable: true
+    example: +34 600 123 456
+  website:
+    type: string
+    nullable: true
+    format: uri
+    example: https://bellahair.com
+  address:
+    type: string
+    nullable: true
+    example: Carrer de Mallorca 123, Barcelona
+required:
+  - instagram
+  - email
+  - phone
+  - website
+  - address

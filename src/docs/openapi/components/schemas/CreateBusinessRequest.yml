@@ -1,0 +1,47 @@
+type: object
+properties:
+  name:
+    type: string
+    example: Bella Hair Studio
+  category:
+    type: string
+    example: hairdresser
+  source:
+    type: string
+    example: instagram
+  priority:
+    type: string
+    example: high
+  instagram:
+    type: string
+    example: "@bella_hair_studio"
+  email:
+    type: string
+    format: email
+    example: hello@bellahair.com
+  phone:
+    type: string
+    example: +34 600 123 456
+  website:
+    type: string
+    format: uri
+    example: https://bellahair.com
+  address:
+    type: string
+    example: Carrer de Mallorca 123, Barcelona
+  notes:
+    type: string
+    example: Interested lead from Instagram.
+  createdById:
+    type: string
+    format: uuid
+    example: 550e8400-e29b-41d4-a716-446655440000
+  assignedToId:
+    type: string
+    format: uuid
+    example: 660e8400-e29b-41d4-a716-446655440000
+required:
+  - name
+  - category
+  - source
+  - createdById

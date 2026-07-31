@@ -1,0 +1,31 @@
+get:
+  operationId: getDashboardSummary
+  summary: Get dashboard summary
+  description: Returns dashboard metric cards summary.
+  tags:
+    - Dashboard
+  responses:
+    "200":
+      description: Dashboard summary returned successfully
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: true
+              data:
+                type: object
+                properties:
+                  metrics:
+                    type: object
+                    properties:
+                      totalBusinesses:
+                        $ref: ../components/schemas/DashboardMetric.yml
+                      contactedBusinesses:
+                        $ref: ../components/schemas/DashboardMetric.yml
+                      pendingFollowUps:
+                        $ref: ../components/schemas/DashboardMetric.yml
+                      highPriorityBusinesses:
+                        $ref: ../components/schemas/DashboardMetric.yml

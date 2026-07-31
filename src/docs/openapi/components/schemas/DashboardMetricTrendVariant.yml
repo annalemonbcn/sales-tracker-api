@@ -1,0 +1,7 @@
+type: string
+enum:
+  - success
+  - warning
+  - danger
+  - neutral
+example: success

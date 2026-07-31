@@ -195,6 +195,13 @@ src/
 
   docs/
     swagger.ts
+    openapi/
+      openapi.yml
+      paths/
+      components/
+        parameters/
+        requestBodies/
+        schemas/
 
   generated/
     prisma/
@@ -216,6 +223,28 @@ src/
     follow-ups/
     dashboard/
 ```
+
+## OpenAPI Documentation
+
+The OpenAPI source is split across YAML files under `src/docs/openapi`.
+`openapi.yml` is the entry point, path definitions live under `paths`, and
+reusable definitions live under `components`.
+
+Validate the complete definition:
+
+```txt
+npm run docs:lint
+```
+
+Generate the bundled document consumed by Swagger UI during development:
+
+```txt
+npm run docs:build
+```
+
+The development and production build commands generate the bundle
+automatically. Swagger UI remains available at `/api-docs`, and the bundled
+JSON document is exposed at `/openapi.json`.
 
 ## Main API Endpoints
 

@@ -1,0 +1,7 @@
+in: path
+name: businessId
+required: true
+schema:
+  type: string
+  format: uuid
+description: Business ID.
